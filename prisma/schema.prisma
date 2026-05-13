@@ -3,8 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model Seller {
+  id         String   @id @default(cuid())
+  clerkId    String   @unique
+  name       String
+  address    String
+  postalCode String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Product {
@@ -23,18 +34,20 @@ model Product {
 }
 
 model Order {
-  id             String      @id @default(cuid())
-  buyerId        String
-  shoppingCartId String?
-  status         OrderStatus @default(PENDING)
-  totalAmount    Float
-  paymentOrderId String?
-  checkoutUrl    String?
-  shippingId     String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id                     String      @id @default(cuid())
+  buyerId                String
+  shoppingCartId         String?
+  status                 OrderStatus @default(PENDING)
+  totalAmount            Float
+  paymentOrderId         String?
+  checkoutUrl            String?
+  shippingId             String?
+  destinationAddress     String?
+  destinationPostalCode  String?
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
 
-  items          OrderItem[]
+  items                  OrderItem[]
 }
 
 model OrderItem {
