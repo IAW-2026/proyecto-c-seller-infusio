@@ -4,11 +4,11 @@ import prisma from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { shopping_cart_id, user_id } = body;
+    const { shopping_cart_id, user_id, destination_address } = body;
 
-    if (!shopping_cart_id || !user_id) {
+    if (!shopping_cart_id || !user_id || !destination_address) {
       return NextResponse.json(
-        { error: "Faltan campos requeridos: shopping_cart_id, user_id" },
+        { error: "Faltan campos requeridos: shopping_cart_id, user_id, destination_address" },
         { status: 400 }
       );
     }
@@ -23,6 +23,8 @@ export async function POST(request: Request) {
         shoppingCartId: shopping_cart_id,
         totalAmount,
         status: "PENDING",
+        destinationAddress: destination_address.address,
+        destinationPostalCode: destination_address.postal_code,
       },
     });
 
