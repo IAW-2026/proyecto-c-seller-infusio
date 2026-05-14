@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "prisma generate && next dev",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && prisma db push --accept-data-loss && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -28,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
+    "tsx": "^4.19.4",
     "typescript": "^6.0.3"
   },
   "pnpm": {
@@ -39,5 +40,8 @@
       "sharp",
       "unrs-resolver"
     ]
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

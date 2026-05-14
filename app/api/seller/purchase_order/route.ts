@@ -13,29 +13,38 @@ export async function POST(request: Request) {
       );
     }
 
-    // Etapa 3: acá iría a buscar el carrito al Buyer App con el shopping_cart_id
-    // para obtener los items y calcular el total real
-    const totalAmount = 0;
-
     const order = await prisma.order.create({
       data: {
         buyerId: user_id,
         shoppingCartId: shopping_cart_id,
-        totalAmount,
+        totalAmount: 0,
         status: "PENDING",
         destinationAddress: destination_address.address,
         destinationPostalCode: destination_address.postal_code,
       },
     });
 
-    const { payment_order_id, checkout_url } = await callPayments(order.id, user_id, totalAmount);
+    const seller = await prisma.seller.findFirst();
+
+    // Etapa 3: reemplazar 0 por la suma real de los productos del carrito
+    const productTotal = 0;
+
+    const { shipping_cost } = await getShippingCost({
+      originPostalCode: seller?.postalCode ?? "0000",
+      destinationPostalCode: destination_address.postal_code,
+    });
+
+    const totalAmount = productTotal + shipping_cost;
+
+    const { payment_order_id, checkout_url } = await callPayments({
+      orderId: order.id,
+      buyerId: user_id,
+      amount: totalAmount,
+    });
 
     await prisma.order.update({
       where: { id: order.id },
-      data: {
-        paymentOrderId: payment_order_id,
-        checkoutUrl: checkout_url,
-      },
+      data: { totalAmount, paymentOrderId: payment_order_id, checkoutUrl: checkout_url },
     });
 
     return NextResponse.json({ purchase_order_id: order.id }, { status: 201 });
@@ -48,7 +57,41 @@ export async function POST(request: Request) {
   }
 }
 
-async function callPayments(orderId: string, buyerId: string, amount: number) {
+async function getShippingCost({
+  originPostalCode,
+  destinationPostalCode,
+}: {
+  originPostalCode: string;
+  destinationPostalCode: string;
+}) {
+  const shippingUrl = process.env.SHIPPING_API_URL;
+
+  if (!shippingUrl) {
+    return { shipping_cost: 1500, currency: "ARS" };
+  }
+
+  const res = await fetch(`${shippingUrl}/api/shipping/cost`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      origin_postal_code: originPostalCode,
+      destination_postal_code: destinationPostalCode,
+      volume: 1,
+    }),
+  });
+
+  return res.json();
+}
+
+async function callPayments({
+  orderId,
+  buyerId,
+  amount,
+}: {
+  orderId: string;
+  buyerId: string;
+  amount: number;
+}) {
   const paymentsUrl = process.env.PAYMENTS_API_URL;
 
   if (!paymentsUrl) {

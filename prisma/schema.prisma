@@ -34,20 +34,20 @@ model Product {
 }
 
 model Order {
-  id                     String      @id @default(cuid())
-  buyerId                String
-  shoppingCartId         String?
-  status                 OrderStatus @default(PENDING)
-  totalAmount            Float
-  paymentOrderId         String?
-  checkoutUrl            String?
-  shippingId             String?
-  destinationAddress     String?
-  destinationPostalCode  String?
-  createdAt              DateTime    @default(now())
-  updatedAt              DateTime    @updatedAt
+  id                    String      @id @default(cuid())
+  buyerId               String
+  shoppingCartId        String?
+  status                OrderStatus @default(PENDING)
+  totalAmount           Float
+  paymentOrderId        String?
+  checkoutUrl           String?
+  shippingId            String?
+  destinationAddress    String?
+  destinationPostalCode String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
 
-  items                  OrderItem[]
+  items                 OrderItem[]
 }
 
 model OrderItem {
