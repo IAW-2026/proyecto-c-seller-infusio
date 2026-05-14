@@ -13,6 +13,10 @@ export async function POST(request: Request) {
       );
     }
 
+    // Etapa 3: acá iría a buscar el carrito al Buyer App con el shopping_cart_id
+    // para obtener los items y calcular el total real
+    const totalAmount = 0;
+
     const order = await prisma.order.create({
       data: {
         buyerId: user_id,
