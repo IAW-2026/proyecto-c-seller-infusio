@@ -24,6 +24,9 @@ export default function DashboardLayout({
           <Link href="/dashboard/orders" className="block px-4 py-2 rounded-lg text-sm font-medium text-amber-100 hover:bg-amber-800 transition-colors">
             Órdenes
           </Link>
+          <Link href="/dashboard/profile" className="block px-4 py-2 rounded-lg text-sm font-medium text-amber-100 hover:bg-amber-800 transition-colors">
+            Mi perfil
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-amber-800 flex items-center gap-3">

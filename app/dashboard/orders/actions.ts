@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -13,10 +14,14 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
 }
 
 export async function createShipment(orderId: string) {
+  const { userId } = await auth();
+
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) return;
 
-  const seller = await prisma.seller.findFirst();
+  const seller = userId
+    ? await prisma.seller.findUnique({ where: { clerkId: userId } })
+    : null;
 
   const { shipping_id } = await callShipping({
     orderId,
