@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 
 async function isAdminSeller(): Promise<boolean> {
   const user = await currentUser();
-  const roles = user?.publicMetadata?.roles as string[] | undefined;
-  return Array.isArray(roles) && roles.includes("adminSeller");
+  const roles = user?.publicMetadata?.roles;
+  if (Array.isArray(roles)) return roles.includes("adminSeller") || roles.includes("admin");
+  if (typeof roles === "string") return roles === "adminSeller" || roles === "admin";
+  return false;
 }
 
 export async function requireAdmin() {
