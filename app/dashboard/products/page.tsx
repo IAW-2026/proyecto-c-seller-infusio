@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function ProductsPage({
@@ -93,7 +94,18 @@ export default async function ProductsPage({
             ) : (
               products.map((p) => (
                 <tr key={p.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-800">{p.name}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                        {p.imageUrl ? (
+                          <Image src={p.imageUrl} alt={p.name} fill className="object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300 text-lg">?</div>
+                        )}
+                      </div>
+                      <span className="font-medium text-gray-800">{p.name}</span>
+                    </div>
+                  </td>
                   <td className="px-6 py-4 text-gray-500">{p.category || "—"}</td>
                   <td className="px-6 py-4 text-right text-gray-800">
                     ${p.price.toLocaleString("es-AR")}
