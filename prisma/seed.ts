@@ -2,65 +2,81 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function main() {
-  await prisma.order.createMany({
-    data: [
-      {
-        buyerId: "user_mock_001",
-        shoppingCartId: "cart_mock_001",
-        totalAmount: 4500,
-        status: "PENDING",
-        paymentOrderId: "mock_payment_1",
-        checkoutUrl: "https://mock-checkout.com/1",
-        destinationAddress: "Av. Corrientes 1234",
-        destinationPostalCode: "1043",
-      },
-      {
-        buyerId: "user_mock_002",
-        shoppingCartId: "cart_mock_002",
-        totalAmount: 8200,
-        status: "PAYMENT_CONFIRMED",
-        paymentOrderId: "mock_payment_2",
-        checkoutUrl: "https://mock-checkout.com/2",
-        destinationAddress: "Av. Santa Fe 567",
-        destinationPostalCode: "1059",
-      },
-      {
-        buyerId: "user_mock_003",
-        shoppingCartId: "cart_mock_003",
-        totalAmount: 3100,
-        status: "PREPARING",
-        paymentOrderId: "mock_payment_3",
-        checkoutUrl: "https://mock-checkout.com/3",
-        destinationAddress: "Calle Belgrano 890",
-        destinationPostalCode: "5000",
-        shippingId: "mock_shipping_3",
-      },
-      {
-        buyerId: "user_mock_004",
-        shoppingCartId: "cart_mock_004",
-        totalAmount: 6750,
-        status: "DISPATCHED",
-        paymentOrderId: "mock_payment_4",
-        checkoutUrl: "https://mock-checkout.com/4",
-        destinationAddress: "Mitre 321",
-        destinationPostalCode: "2000",
-        shippingId: "mock_shipping_4",
-      },
-      {
-        buyerId: "user_mock_005",
-        shoppingCartId: "cart_mock_005",
-        totalAmount: 2900,
-        status: "CANCELLED",
-        paymentOrderId: "mock_payment_5",
-        checkoutUrl: "https://mock-checkout.com/5",
-        destinationAddress: "San Martín 456",
-        destinationPostalCode: "3000",
-      },
-    ],
-  });
+const ADDRESSES = [
+  { address: "Av. Corrientes 1234, CABA", postalCode: "1043" },
+  { address: "San Martín 567, Rosario", postalCode: "2000" },
+  { address: "Belgrano 890, Córdoba", postalCode: "5000" },
+  { address: "Mitre 321, Mendoza", postalCode: "5500" },
+];
 
-  console.log("Órdenes de prueba creadas.");
+const BUYER_IDS = ["buyer_001", "buyer_002", "buyer_003", "buyer_004"];
+
+const STATUSES = ["PENDING", "PAYMENT_CONFIRMED", "PREPARING", "DISPATCHED"] as const;
+
+async function main() {
+  console.log("Borrando órdenes e ítems existentes...");
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+
+  const sellers = await prisma.seller.findMany();
+  if (sellers.length === 0) {
+    console.log("No hay sellers. Abortando.");
+    return;
+  }
+
+  const products = await prisma.product.findMany({ where: { isActive: true } });
+  if (products.length === 0) {
+    console.log("No hay productos. Abortando.");
+    return;
+  }
+
+  console.log(`${sellers.length} seller(s), ${products.length} producto(s) encontrados.`);
+
+  for (let i = 0; i < 4; i++) {
+    const status = STATUSES[i];
+    const addr = ADDRESSES[i];
+
+    // Buscar el seller que tiene productos para esta iteración
+    const pool = products.filter((p) => p.sellerId !== null);
+    if (pool.length === 0) continue;
+
+    const sellerId = pool[0].sellerId!;
+    const seller = sellers.find((s) => s.id === sellerId)!;
+    if (!seller) continue;
+
+    const selected = pool.slice(0, Math.min(2, pool.length));
+    const quantities = selected.map(() => Math.floor(Math.random() * 3) + 1);
+    const productTotal = selected.reduce((sum, p, idx) => sum + p.price * quantities[idx], 0);
+    const totalAmount = productTotal + 1500;
+
+    const order = await prisma.order.create({
+      data: {
+        buyerId: BUYER_IDS[i],
+        sellerId: seller.id,
+        shoppingCartId: `cart_mock_${i + 1}`,
+        status,
+        totalAmount,
+        destinationAddress: addr.address,
+        destinationPostalCode: addr.postalCode,
+        paymentOrderId: status !== "PENDING" ? `pay_mock_${i + 1}` : null,
+        checkoutUrl: status === "PENDING" ? `https://mock-checkout.com/order_${i + 1}` : null,
+        shippingId: ["PREPARING", "DISPATCHED"].includes(status) ? `ship_mock_${i + 1}` : null,
+      },
+    });
+
+    await prisma.orderItem.createMany({
+      data: selected.map((p, idx) => ({
+        orderId: order.id,
+        productId: p.id,
+        quantity: quantities[idx],
+        unitPrice: p.price,
+      })),
+    });
+
+    console.log(`Orden ${i + 1}: ${status} | ${seller.name} | $${totalAmount}`);
+  }
+
+  console.log("Seed completado.");
 }
 
 main()
