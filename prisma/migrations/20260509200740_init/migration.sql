@@ -1,4 +1,7 @@
+
+--tabla datos del comprador y vendedor.
 -- CreateEnum
+
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAYMENT_CONFIRMED', 'PREPARING', 'DISPATCHED', 'DELIVERED', 'CANCELLED');
 
 -- CreateTable
@@ -18,6 +21,22 @@ CREATE TABLE "Product" (
 );
 
 -- CreateTable
+CREATE TABLE "Seller" (
+    "id" TEXT NOT NULL,
+    "clerkId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
+    "postalCode" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Seller_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Seller_clerkId_key" ON "Seller"("clerkId");
+
+-- CreateTable
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
     "buyerId" TEXT NOT NULL,
@@ -27,6 +46,8 @@ CREATE TABLE "Order" (
     "paymentOrderId" TEXT,
     "checkoutUrl" TEXT,
     "shippingId" TEXT,
+    "destinationAddress" TEXT,
+    "destinationPostalCode" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
