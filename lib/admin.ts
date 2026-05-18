@@ -1,17 +1,16 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-async function getRole(): Promise<string | undefined> {
+async function isAdminSeller(): Promise<boolean> {
   const user = await currentUser();
-  return user?.publicMetadata?.role as string | undefined;
+  const roles = user?.publicMetadata?.roles as string[] | undefined;
+  return Array.isArray(roles) && roles.includes("adminSeller");
 }
 
 export async function requireAdmin() {
-  const role = await getRole();
-  if (role !== "adminSeller") redirect("/dashboard");
+  if (!(await isAdminSeller())) redirect("/dashboard");
 }
 
 export async function checkAdminApi(): Promise<boolean> {
-  const role = await getRole();
-  return role === "adminSeller";
+  return isAdminSeller();
 }
