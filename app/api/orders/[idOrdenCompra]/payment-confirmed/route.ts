@@ -44,7 +44,9 @@ export async function POST(
     });
 
     if (status === "accepted") {
-      const seller = await prisma.seller.findFirst();
+      const seller = order.sellerId
+        ? await prisma.seller.findUnique({ where: { id: order.sellerId } })
+        : null;
 
       const { shipping_id } = await callShipping({
         orderId: idOrdenCompra,
