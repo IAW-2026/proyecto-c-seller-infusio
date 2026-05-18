@@ -1,40 +1,84 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+interface CartItem {
+  id: string;
+  cart_id: string;
+  product_id: string;
+  product_name: string;
+  product_variant: string;
+  product_image_url: string;
+  price_at_time: number;
+  quantity: number;
+}
+
+interface Address {
+  street: string;
+  city: string;
+  province: string;
+  postal_code: string;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { shopping_cart_id, user_id, destination_address } = body;
+    const { shopping_cart_id, user_id, cart_items, address } = body;
 
-    if (!shopping_cart_id || !user_id || !destination_address) {
+    if (!shopping_cart_id || !user_id || !cart_items || !address) {
       return NextResponse.json(
-        { error: "Faltan campos requeridos: shopping_cart_id, user_id, destination_address" },
+        { error: "Faltan campos requeridos: shopping_cart_id, user_id, cart_items, address" },
         { status: 400 }
       );
     }
 
-    const order = await prisma.order.create({
-      data: {
-        buyerId: user_id,
-        shoppingCartId: shopping_cart_id,
-        totalAmount: 0,
-        status: "PENDING",
-        destinationAddress: destination_address.address,
-        destinationPostalCode: destination_address.postal_code,
-      },
-    });
+    if (!Array.isArray(cart_items) || cart_items.length === 0) {
+      return NextResponse.json(
+        { error: "cart_items debe ser un array no vacío" },
+        { status: 400 }
+      );
+    }
+
+    const productTotal = cart_items.reduce(
+      (sum: number, item: CartItem) => sum + item.price_at_time * item.quantity,
+      0
+    );
+
+    const destinationAddress = `${address.street}, ${address.city}, ${address.province}`;
+    const destinationPostalCode = (address as Address).postal_code;
 
     const seller = await prisma.seller.findFirst();
 
-    // Etapa 3: reemplazar 0 por la suma real de los productos del carrito
-    const productTotal = 0;
-
     const { shipping_cost } = await getShippingCost({
       originPostalCode: seller?.postalCode ?? "0000",
-      destinationPostalCode: destination_address.postal_code,
+      destinationPostalCode,
     });
 
     const totalAmount = productTotal + shipping_cost;
+
+    // Crear orden e ítems en una transacción: si algo falla, se revierte todo
+    const order = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.order.create({
+        data: {
+          buyerId: user_id,
+          shoppingCartId: shopping_cart_id,
+          totalAmount,
+          status: "PENDING",
+          destinationAddress,
+          destinationPostalCode,
+        },
+      });
+
+      await tx.orderItem.createMany({
+        data: cart_items.map((item: CartItem) => ({
+          orderId: newOrder.id,
+          productId: item.product_id,
+          quantity: item.quantity,
+          unitPrice: item.price_at_time,
+        })),
+      });
+
+      return newOrder;
+    });
 
     const { payment_order_id, checkout_url } = await callPayments({
       orderId: order.id,
@@ -44,7 +88,7 @@ export async function POST(request: Request) {
 
     await prisma.order.update({
       where: { id: order.id },
-      data: { totalAmount, paymentOrderId: payment_order_id, checkoutUrl: checkout_url },
+      data: { paymentOrderId: payment_order_id, checkoutUrl: checkout_url },
     });
 
     return NextResponse.json({ purchase_order_id: order.id }, { status: 201 });
