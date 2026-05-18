@@ -33,13 +33,16 @@ async function main() {
   console.log(`${sellers.length} seller(s), ${products.length} producto(s) encontrados.`);
 
   for (let i = 0; i < 4; i++) {
-    const seller = sellers[i % sellers.length];
     const status = STATUSES[i];
     const addr = ADDRESSES[i];
 
-    // Productos de este seller (o sin seller asignado como fallback)
-    const pool = products.filter((p) => p.sellerId === seller.id || p.sellerId === null);
+    // Buscar el seller que tiene productos para esta iteración
+    const pool = products.filter((p) => p.sellerId !== null);
     if (pool.length === 0) continue;
+
+    const sellerId = pool[0].sellerId!;
+    const seller = sellers.find((s) => s.id === sellerId)!;
+    if (!seller) continue;
 
     const selected = pool.slice(0, Math.min(2, pool.length));
     const quantities = selected.map(() => Math.floor(Math.random() * 3) + 1);
