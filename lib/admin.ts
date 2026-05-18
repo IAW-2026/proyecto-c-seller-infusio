@@ -8,10 +8,10 @@ async function getRole(): Promise<string | undefined> {
 
 export async function requireAdmin() {
   const role = await getRole();
-  if (role !== "admin") redirect("/dashboard");
+  if (role !== "adminSeller") redirect("/dashboard");
 }
 
 export async function checkAdminApi(): Promise<boolean> {
   const role = await getRole();
-  return role === "admin";
+  return role === "adminSeller";
 }
