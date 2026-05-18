@@ -1,17 +1,24 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: Promise<{ search?: string; page?: string }>;
 }) {
+  const { userId } = await auth();
+  const seller = userId
+    ? await prisma.seller.findUnique({ where: { clerkId: userId } })
+    : null;
+
   const { search = "", page = "1" } = await searchParams;
   const currentPage = parseInt(page);
   const limit = 10;
   const skip = (currentPage - 1) * limit;
 
   const where = {
+    sellerId: seller?.id,
     isActive: true,
     ...(search && {
       OR: [

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { updateOrderStatus, createShipment } from "./actions";
+import { auth } from "@clerk/nextjs/server";
 
 const STATUS_LABEL: Record<string, string> = {
   PENDING: "Pendiente",
@@ -25,12 +26,20 @@ export default async function OrdersPage({
 }: {
   searchParams: Promise<{ status?: string; page?: string }>;
 }) {
+  const { userId } = await auth();
+  const seller = userId
+    ? await prisma.seller.findUnique({ where: { clerkId: userId } })
+    : null;
+
   const { status = "", page = "1" } = await searchParams;
   const currentPage = parseInt(page);
   const limit = 10;
   const skip = (currentPage - 1) * limit;
 
-  const where = status ? { status: status as never } : {};
+  const where = {
+    sellerId: seller?.id,
+    ...(status && { status: status as never }),
+  };
 
   const [orders, total] = await Promise.all([
     prisma.order.findMany({
