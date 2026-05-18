@@ -8,8 +8,7 @@ async function isAdminSeller(): Promise<boolean> {
 }
 
 export async function requireAdmin() {
-  // TODO: restaurar chequeo cuando Clerk tenga el rol asignado
-  // if (!(await isAdminSeller())) redirect("/dashboard");
+  if (!(await isAdminSeller())) redirect("/dashboard");
 }
 
 export async function checkAdminApi(): Promise<boolean> {
