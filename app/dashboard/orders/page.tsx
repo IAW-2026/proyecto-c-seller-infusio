@@ -118,7 +118,10 @@ export default async function OrdersPage({
                   <td className="px-6 py-4 text-gray-500 text-xs font-mono">
                     {o.shippingId ? o.shippingId.slice(0, 8) + "..." : "—"}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4 text-right flex gap-4 justify-end items-center">
+                    <Link href={`/dashboard/orders/${o.id}`} className="text-gray-500 hover:underline text-sm">
+                      Ver
+                    </Link>
                     {o.status === "PAYMENT_CONFIRMED" && !o.shippingId && (
                       <form action={createShipment.bind(null, o.id)}>
                         <button type="submit" className="text-sm text-amber-700 hover:underline font-medium">
