@@ -11,7 +11,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Perfil del vendedor</h2>
+      <h2 className="text-2xl font-bold text-forest-dark mb-6">Perfil del vendedor</h2>
       <ProfileForm seller={seller} />
     </div>
   );
