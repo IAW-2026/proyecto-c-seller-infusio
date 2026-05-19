@@ -46,20 +46,23 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
     setLoading(false);
   }
 
+  const inputClass = "w-full border border-cream rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sage transition-shadow";
+  const labelClass = "block text-sm font-medium text-forest-dark mb-1.5";
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5"
+      className="bg-white rounded-2xl shadow-sm border border-cream p-6 space-y-5"
     >
       {!seller && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
+        <div className="bg-cream border border-sage/30 rounded-xl px-4 py-3 text-sm text-forest">
           Completá tu perfil para que los cálculos de envío usen tu dirección real.
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Nombre del negocio <span className="text-red-500">*</span>
+        <label className={labelClass}>
+          Nombre del negocio <span className="text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -68,13 +71,13 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
           onChange={handleChange}
           required
           placeholder="Ej: Infusio Store"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Dirección de despacho <span className="text-red-500">*</span>
+        <label className={labelClass}>
+          Dirección de despacho <span className="text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -83,13 +86,13 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
           onChange={handleChange}
           required
           placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Código postal <span className="text-red-500">*</span>
+        <label className={labelClass}>
+          Código postal <span className="text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -98,23 +101,23 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
           onChange={handleChange}
           required
           placeholder="Ej: 1043"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className={inputClass}
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-sage mt-1.5">
           Se usa para calcular el costo de envío de cada orden.
         </p>
       </div>
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && (
-        <p className="text-green-600 text-sm">Perfil guardado correctamente.</p>
+        <p className="text-forest text-sm font-medium">✓ Perfil guardado correctamente.</p>
       )}
 
       <div className="pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="bg-amber-800 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-amber-900 transition-colors disabled:opacity-50"
+          className="bg-forest text-cream px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-forest-dark transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
         >
           {loading ? "Guardando..." : "Guardar perfil"}
         </button>
