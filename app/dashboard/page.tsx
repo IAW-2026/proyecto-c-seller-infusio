@@ -15,36 +15,45 @@ export default async function DashboardPage() {
   ]);
 
   const ingresos = await prisma.order.aggregate({
-    where: { sellerId: seller?.id, status: { in: ["PAYMENT_CONFIRMED", "PREPARING", "DISPATCHED", "DELIVERED"] } },
+    where: {
+      sellerId: seller?.id,
+      status: { in: ["PAYMENT_CONFIRMED", "PREPARING", "DISPATCHED", "DELIVERED"] },
+    },
     _sum: { totalAmount: true },
   });
 
   const totalIngresos = ingresos._sum.totalAmount ?? 0;
 
   const stats = [
-    { label: "Productos activos", value: totalProducts },
-    { label: "Órdenes totales", value: totalOrders },
-    { label: "Órdenes pendientes", value: pendingOrders },
-    { label: "Pagos confirmados", value: confirmedOrders },
+    { label: "Productos activos", value: totalProducts, icon: "◉" },
+    { label: "Órdenes totales", value: totalOrders, icon: "◎" },
+    { label: "Órdenes pendientes", value: pendingOrders, icon: "⏳" },
+    { label: "Pagos confirmados", value: confirmedOrders, icon: "✓" },
   ];
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">Resumen</h2>
-      <p className="text-gray-500 mb-8">Bienvenida al panel de vendedor de Infusio.</p>
+      <h2 className="text-2xl font-bold text-forest-dark mb-1">Resumen</h2>
+      <p className="text-sage mb-8 text-sm">Bienvenida al panel de vendedor de Infusio.</p>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <p className="text-sm text-gray-500 mb-1">{s.label}</p>
-            <p className="text-3xl font-bold text-gray-800">{s.value}</p>
+          <div
+            key={s.label}
+            className="bg-white rounded-2xl shadow-sm border border-cream p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-sage uppercase tracking-wide">{s.label}</p>
+              <span className="text-sage text-lg">{s.icon}</span>
+            </div>
+            <p className="text-3xl font-bold text-forest-dark">{s.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <p className="text-sm text-gray-500 mb-1">Ingresos confirmados</p>
-        <p className="text-3xl font-bold text-amber-800">
+      <div className="bg-forest-dark rounded-2xl p-6 text-white hover:shadow-lg transition-shadow duration-200">
+        <p className="text-sage text-xs font-medium uppercase tracking-wide mb-2">Ingresos confirmados</p>
+        <p className="text-4xl font-bold text-cream">
           ${totalIngresos.toLocaleString("es-AR")}
         </p>
       </div>

@@ -42,12 +42,7 @@ export default async function OrdersPage({
   };
 
   const [orders, total] = await Promise.all([
-    prisma.order.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
-    }),
+    prisma.order.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" } }),
     prisma.order.count({ where }),
   ]);
 
@@ -55,18 +50,17 @@ export default async function OrdersPage({
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Órdenes</h2>
+      <h2 className="text-2xl font-bold text-forest-dark mb-6">Órdenes</h2>
 
-      {/* Filtro por estado */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {["", ...Object.keys(STATUS_LABEL)].map((s) => (
           <Link
             key={s}
             href={s ? `?status=${s}` : "?"}
-            className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
               status === s
-                ? "bg-amber-800 text-white border-amber-800"
-                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                ? "bg-forest text-cream shadow-sm"
+                : "bg-white text-sage border border-cream hover:bg-cream-light hover:text-forest"
             }`}
           >
             {s ? STATUS_LABEL[s] : "Todas"}
@@ -74,75 +68,79 @@ export default async function OrdersPage({
         ))}
       </div>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-cream overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-cream-light border-b border-cream">
             <tr>
-              <th className="text-left px-6 py-3 text-gray-600 font-medium">ID Orden</th>
-              <th className="text-left px-6 py-3 text-gray-600 font-medium">Fecha</th>
-              <th className="text-right px-6 py-3 text-gray-600 font-medium">Total</th>
-              <th className="text-left px-6 py-3 text-gray-600 font-medium">Estado</th>
-              <th className="text-left px-6 py-3 text-gray-600 font-medium">Envío</th>
-              <th className="px-6 py-3"></th>
+              <th className="text-left px-6 py-3.5 text-forest font-semibold">ID Orden</th>
+              <th className="text-left px-6 py-3.5 text-forest font-semibold hidden sm:table-cell">Fecha</th>
+              <th className="text-right px-6 py-3.5 text-forest font-semibold">Total</th>
+              <th className="text-left px-6 py-3.5 text-forest font-semibold">Estado</th>
+              <th className="text-left px-6 py-3.5 text-forest font-semibold hidden md:table-cell">Envío</th>
+              <th className="px-6 py-3.5"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-cream/50">
             {orders.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-sage">
                   No hay órdenes.
                 </td>
               </tr>
             ) : (
               orders.map((o) => (
-                <tr key={o.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-mono text-gray-500 text-xs">
+                <tr key={o.id} className="hover:bg-cream-light transition-colors duration-150">
+                  <td className="px-6 py-4 font-mono text-sage text-xs">
                     {o.id.slice(0, 8)}...
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-sage hidden sm:table-cell">
                     {o.createdAt.toLocaleDateString("es-AR", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",
                     })}
                   </td>
-                  <td className="px-6 py-4 text-right text-gray-800">
+                  <td className="px-6 py-4 text-right font-semibold text-forest-dark">
                     ${o.totalAmount.toLocaleString("es-AR")}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLE[o.status]}`}>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_STYLE[o.status]}`}>
                       {STATUS_LABEL[o.status]}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-500 text-xs font-mono">
+                  <td className="px-6 py-4 text-sage text-xs font-mono hidden md:table-cell">
                     {o.shippingId ? o.shippingId.slice(0, 8) + "..." : "—"}
                   </td>
-                  <td className="px-6 py-4 text-right flex gap-4 justify-end items-center">
-                    <Link href={`/dashboard/orders/${o.id}`} className="text-gray-500 hover:underline text-sm">
-                      Ver
-                    </Link>
-                    {o.status === "PAYMENT_CONFIRMED" && !o.shippingId && (
-                      <form action={createShipment.bind(null, o.id)}>
-                        <button type="submit" className="text-sm text-amber-700 hover:underline font-medium">
-                          Crear envío
-                        </button>
-                      </form>
-                    )}
-                    {o.status === "PAYMENT_CONFIRMED" && o.shippingId && (
-                      <form action={updateOrderStatus.bind(null, o.id, "PREPARING")}>
-                        <button type="submit" className="text-sm text-amber-700 hover:underline font-medium">
-                          Comenzar preparación
-                        </button>
-                      </form>
-                    )}
-                    {o.status === "PREPARING" && (
-                      <form action={updateOrderStatus.bind(null, o.id, "DISPATCHED")}>
-                        <button type="submit" className="text-sm text-amber-700 hover:underline font-medium">
-                          Marcar como despachado
-                        </button>
-                      </form>
-                    )}
+                  <td className="px-6 py-4">
+                    <div className="flex gap-3 justify-end items-center flex-wrap">
+                      <Link
+                        href={`/dashboard/orders/${o.id}`}
+                        className="text-forest hover:text-forest-dark text-sm font-medium transition-colors"
+                      >
+                        Ver
+                      </Link>
+                      {o.status === "PAYMENT_CONFIRMED" && !o.shippingId && (
+                        <form action={createShipment.bind(null, o.id)}>
+                          <button type="submit" className="text-sm text-forest hover:text-forest-dark font-medium transition-colors hover:underline">
+                            Crear envío
+                          </button>
+                        </form>
+                      )}
+                      {o.status === "PAYMENT_CONFIRMED" && o.shippingId && (
+                        <form action={updateOrderStatus.bind(null, o.id, "PREPARING")}>
+                          <button type="submit" className="text-sm text-forest hover:text-forest-dark font-medium transition-colors hover:underline">
+                            Comenzar preparación
+                          </button>
+                        </form>
+                      )}
+                      {o.status === "PREPARING" && (
+                        <form action={updateOrderStatus.bind(null, o.id, "DISPATCHED")}>
+                          <button type="submit" className="text-sm text-forest hover:text-forest-dark font-medium transition-colors hover:underline">
+                            Marcar como despachado
+                          </button>
+                        </form>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -151,17 +149,16 @@ export default async function OrdersPage({
         </table>
       </div>
 
-      {/* Paginación */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-6">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Link
               key={p}
               href={`?page=${p}${status ? `&status=${status}` : ""}`}
-              className={`px-3 py-1 rounded text-sm ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 p === currentPage
-                  ? "bg-amber-800 text-white"
-                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  ? "bg-forest text-cream shadow-sm"
+                  : "bg-white border border-cream text-sage hover:bg-cream-light"
               }`}
             >
               {p}
