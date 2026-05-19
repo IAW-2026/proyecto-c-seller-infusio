@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import EditSellerForm from "./EditSellerForm";
 
@@ -10,7 +11,12 @@ export default async function EditSellerPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="max-w-lg">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Editar vendedor</h2>
+      <div className="flex items-center gap-4 mb-8">
+        <Link href="/admin/sellers" className="text-slate-400 hover:text-slate-600 text-sm transition-colors">
+          ← Volver
+        </Link>
+        <h2 className="text-2xl font-bold text-slate-800">Editar vendedor</h2>
+      </div>
       <EditSellerForm seller={seller} />
     </div>
   );
