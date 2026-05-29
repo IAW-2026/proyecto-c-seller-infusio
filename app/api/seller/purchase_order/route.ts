@@ -6,8 +6,8 @@ interface CartItem {
   cart_id: string;
   product_id: string;
   product_name: string;
-  product_variant: string;
-  product_image_url: string;
+  product_variant: string | null;
+  product_image_url: string | null;
   price_at_time: number;
   quantity: number;
 }
@@ -38,90 +38,77 @@ export async function POST(request: Request) {
       );
     }
 
-    const destinationAddress = `${address.street}, ${address.city}, ${address.province}`;
+    const productTotal = cart_items.reduce(
+      (sum: number, item: CartItem) => sum + item.price_at_time * item.quantity,
+      0
+    );
+
+    const destinationAddress = `${(address as Address).street}, ${(address as Address).city}, ${(address as Address).province}`;
     const destinationPostalCode = (address as Address).postal_code;
 
-    // Buscar a qué seller pertenece cada producto
-    const productIds = cart_items.map((item: CartItem) => item.product_id);
-    const products = await prisma.product.findMany({
-      where: { id: { in: productIds } },
-      select: { id: true, sellerId: true },
+    const seller = await prisma.seller.findFirst();
+
+    const { shipping_cost } = await getShippingCost({
+      originPostalCode: seller?.postalCode ?? "0000",
+      destinationPostalCode,
     });
 
-    const productSellerMap = new Map(products.map((p) => [p.id, p.sellerId]));
+    const totalAmount = productTotal + shipping_cost;
 
-    // Agrupar ítems por seller
-    const itemsBySeller = new Map<string, CartItem[]>();
-    for (const item of cart_items as CartItem[]) {
-      const sellerId = productSellerMap.get(item.product_id);
-      if (!sellerId) {
-        return NextResponse.json(
-          { error: `Producto ${item.product_id} no encontrado o sin vendedor asignado` },
-          { status: 400 }
-        );
-      }
-      if (!itemsBySeller.has(sellerId)) itemsBySeller.set(sellerId, []);
-      itemsBySeller.get(sellerId)!.push(item);
-    }
-
-    const purchaseOrders: { purchase_order_id: string; seller_id: string }[] = [];
-
-    // Crear una orden por seller
-    for (const [sellerId, sellerItems] of itemsBySeller) {
-      const productTotal = sellerItems.reduce(
-        (sum, item) => sum + item.price_at_time * item.quantity,
-        0
-      );
-
-      const seller = await prisma.seller.findUnique({ where: { id: sellerId } });
-
-      const { shipping_cost } = await getShippingCost({
-        originPostalCode: seller?.postalCode ?? "0000",
-        destinationPostalCode,
+    const order = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.order.create({
+        data: {
+          buyerId: user_id,
+          shoppingCartId: shopping_cart_id,
+          totalAmount,
+          shippingCost: shipping_cost,
+          status: "PENDING",
+          destinationAddress,
+          destinationPostalCode,
+        },
       });
 
-      const totalAmount = productTotal + shipping_cost;
-
-      const order = await prisma.$transaction(async (tx) => {
-        const newOrder = await tx.order.create({
-          data: {
-            buyerId: user_id,
-            sellerId,
-            shoppingCartId: shopping_cart_id,
-            totalAmount,
-            status: "PENDING",
-            destinationAddress,
-            destinationPostalCode,
-          },
-        });
-
-        await tx.orderItem.createMany({
-          data: sellerItems.map((item) => ({
-            orderId: newOrder.id,
-            productId: item.product_id,
-            quantity: item.quantity,
-            unitPrice: item.price_at_time,
-          })),
-        });
-
-        return newOrder;
+      await tx.orderItem.createMany({
+        data: cart_items.map((item: CartItem) => ({
+          orderId: newOrder.id,
+          productId: item.product_id,
+          quantity: item.quantity,
+          unitPrice: item.price_at_time,
+          productVariant: item.product_variant ?? null,
+        })),
       });
 
-      const { payment_order_id, checkout_url } = await callPayments({
-        orderId: order.id,
-        buyerId: user_id,
-        amount: totalAmount,
-      });
+      return newOrder;
+    });
 
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { paymentOrderId: payment_order_id, checkoutUrl: checkout_url },
-      });
+    const { payment_order_id, checkout_url } = await callPayments({
+      orderId: order.id,
+      buyerId: user_id,
+      amount: totalAmount,
+    });
 
-      purchaseOrders.push({ purchase_order_id: order.id, seller_id: sellerId });
-    }
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { paymentOrderId: payment_order_id, checkoutUrl: checkout_url },
+    });
 
-    return NextResponse.json({ purchase_orders: purchaseOrders }, { status: 201 });
+    return NextResponse.json(
+      {
+        purchase_order_id: order.id,
+        user_id: order.buyerId,
+        shopping_cart_id: order.shoppingCartId,
+        status: order.status.toLowerCase(),
+        created_at: order.createdAt,
+        shipping_id: order.shippingId,
+        payment_id: payment_order_id,
+        payment_url: checkout_url,
+        shipping_cost,
+        currency: "ARS",
+        address: destinationAddress,
+        cart_items,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -146,11 +133,13 @@ async function getShippingCost({
 
   const res = await fetch(`${shippingUrl}/api/shipping/cost`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.SELLER_API_KEY ?? ""}`,
+    },
     body: JSON.stringify({
       origin_postal_code: originPostalCode,
       destination_postal_code: destinationPostalCode,
-      volume: 1,
     }),
   });
 
