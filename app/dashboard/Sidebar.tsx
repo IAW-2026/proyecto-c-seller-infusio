@@ -26,8 +26,8 @@ function NavLinks({ onClose }: { onClose?: () => void }) {
             onClick={onClose}
             className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               active
-                ? "bg-forest text-cream shadow-sm"
-                : "text-sage hover:bg-white/10 hover:text-cream hover:translate-x-1"
+                ? "bg-cream text-forest-dark shadow-sm"
+                : "text-cream hover:bg-white/10 hover:translate-x-1"
             }`}
           >
             <span className="text-base">{link.icon}</span>
@@ -44,12 +44,12 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     <>
       <div className="p-6 border-b border-white/10">
         <h1 className="text-xl font-bold tracking-tight text-cream">🌿 Infusio</h1>
-        <p className="text-sage text-sm mt-1">Panel del vendedor</p>
+        <p className="text-cream/80 text-sm mt-1">Panel del vendedor</p>
       </div>
       <NavLinks onClose={onClose} />
       <div className="p-4 border-t border-white/10 flex items-center gap-3">
         <UserButton />
-        <span className="text-sm text-sage">Mi cuenta</span>
+        <span className="text-sm text-cream">Mi cuenta</span>
       </div>
     </>
   );
@@ -91,7 +91,8 @@ export default function Sidebar() {
         <div className="flex justify-end p-4">
           <button
             onClick={() => setOpen(false)}
-            className="text-sage hover:text-cream p-1 rounded-lg hover:bg-white/10 transition-colors"
+            className="text-cream hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label="Cerrar menú"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
