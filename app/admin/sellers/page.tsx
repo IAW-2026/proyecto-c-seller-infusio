@@ -2,15 +2,35 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import DeleteSellerButton from "./DeleteSellerButton";
 
-export default async function AdminSellersPage() {
-  const sellers = await prisma.seller.findMany({ orderBy: { createdAt: "desc" } });
+export default async function AdminSellersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; page?: string }>;
+}) {
+  const { search = "", page = "1" } = await searchParams;
+  const currentPage = parseInt(page);
+  const limit = 10;
+  const skip = (currentPage - 1) * limit;
+
+  const where = search
+    ? { name: { contains: search, mode: "insensitive" as const } }
+    : {};
+
+  const [sellers, total] = await Promise.all([
+    prisma.seller.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" } }),
+    prisma.seller.count({ where }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Vendedores</h2>
-          <p className="text-slate-500 text-sm mt-1">{sellers.length} vendedor{sellers.length !== 1 ? "es" : ""} registrado{sellers.length !== 1 ? "s" : ""}</p>
+          <p className="text-slate-500 text-sm mt-1">
+            {total} vendedor{total !== 1 ? "es" : ""} registrado{total !== 1 ? "s" : ""}
+          </p>
         </div>
         <Link
           href="/admin/sellers/new"
@@ -19,6 +39,24 @@ export default async function AdminSellersPage() {
           <span>+</span> Nuevo vendedor
         </Link>
       </div>
+
+      <form method="GET" className="mb-6">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            name="search"
+            defaultValue={search}
+            placeholder="Buscar por nombre..."
+            className="flex-1 border border-slate-200 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-shadow"
+          />
+          <button
+            type="submit"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
+          >
+            Buscar
+          </button>
+        </div>
+      </form>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <table className="w-full text-sm">
@@ -35,8 +73,12 @@ export default async function AdminSellersPage() {
             {sellers.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-16 text-center text-slate-400">
-                  <p className="font-medium">No hay vendedores registrados.</p>
-                  <p className="text-sm mt-1">Creá el primero usando el botón de arriba.</p>
+                  <p className="font-medium">
+                    {search ? `No se encontraron vendedores para "${search}".` : "No hay vendedores registrados."}
+                  </p>
+                  {!search && (
+                    <p className="text-sm mt-1">Creá el primero usando el botón de arriba.</p>
+                  )}
                 </td>
               </tr>
             ) : (
@@ -68,6 +110,24 @@ export default async function AdminSellersPage() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <Link
+              key={p}
+              href={`?page=${p}${search ? `&search=${search}` : ""}`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                p === currentPage
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+              }`}
+            >
+              {p}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
