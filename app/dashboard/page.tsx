@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   return (
     <div>
       <h2 className="text-2xl font-bold text-forest-dark mb-1">Resumen</h2>
-      <p className="text-sage mb-8 text-sm">Bienvenida al panel de vendedor de Infusio.</p>
+      <p className="text-forest-dark/70 mb-8 text-sm">Bienvenida al panel de vendedor de Infusio.</p>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((s) => (
@@ -43,8 +43,8 @@ export default async function DashboardPage() {
             className="bg-white rounded-2xl shadow-sm border border-cream p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-medium text-sage uppercase tracking-wide">{s.label}</p>
-              <span className="text-sage text-lg">{s.icon}</span>
+              <p className="text-xs font-medium text-forest-dark uppercase tracking-wide">{s.label}</p>
+              <span className="text-forest text-lg">{s.icon}</span>
             </div>
             <p className="text-3xl font-bold text-forest-dark">{s.value}</p>
           </div>
@@ -52,7 +52,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="bg-forest-dark rounded-2xl p-6 text-white hover:shadow-lg transition-shadow duration-200">
-        <p className="text-sage text-xs font-medium uppercase tracking-wide mb-2">Ingresos confirmados</p>
+        <p className="text-cream text-xs font-medium uppercase tracking-wide mb-2">Ingresos confirmados</p>
         <p className="text-4xl font-bold text-cream">
           ${totalIngresos.toLocaleString("es-AR")}
         </p>
