@@ -17,7 +17,7 @@ export default async function ProductsPage({
 
   const { search = "", page = "1" } = await searchParams;
   const currentPage = parseInt(page);
-  const limit = 8;
+  const limit = 7;
   const skip = (currentPage - 1) * limit;
 
   const where = {
