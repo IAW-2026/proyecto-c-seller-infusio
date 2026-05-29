@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import DeleteSellerButton from "./DeleteSellerButton";
+import SearchForm from "@/components/admin/SearchForm";
+import Pagination from "@/components/ui/Pagination";
 
 export default async function AdminSellersPage({
   searchParams,
@@ -40,23 +42,7 @@ export default async function AdminSellersPage({
         </Link>
       </div>
 
-      <form method="GET" className="mb-6">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            name="search"
-            defaultValue={search}
-            placeholder="Buscar por nombre..."
-            className="flex-1 border border-slate-200 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-shadow"
-          />
-          <button
-            type="submit"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
-          >
-            Buscar
-          </button>
-        </div>
-      </form>
+      <SearchForm defaultValue={search} placeholder="Buscar por nombre..." />
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <table className="w-full text-sm">
@@ -111,23 +97,12 @@ export default async function AdminSellersPage({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Link
-              key={p}
-              href={`?page=${p}${search ? `&search=${search}` : ""}`}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                p === currentPage
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
-              }`}
-            >
-              {p}
-            </Link>
-          ))}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        buildHref={(p) => `?page=${p}${search ? `&search=${search}` : ""}`}
+        variant="admin"
+      />
     </div>
   );
 }

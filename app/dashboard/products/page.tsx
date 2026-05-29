@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import SearchForm from "@/components/dashboard/SearchForm";
+import Pagination from "@/components/ui/Pagination";
 
 export default async function ProductsPage({
   searchParams,
@@ -15,7 +17,7 @@ export default async function ProductsPage({
 
   const { search = "", page = "1" } = await searchParams;
   const currentPage = parseInt(page);
-  const limit = 8;
+  const limit = 6;
   const skip = (currentPage - 1) * limit;
 
   const where = {
@@ -48,23 +50,7 @@ export default async function ProductsPage({
         </Link>
       </div>
 
-      <form method="GET" className="mb-6">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            name="search"
-            defaultValue={search}
-            placeholder="Buscar por nombre o categoría..."
-            className="flex-1 border border-cream rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sage transition-shadow"
-          />
-          <button
-            type="submit"
-            className="bg-forest text-cream px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-forest-dark transition-all duration-200"
-          >
-            Buscar
-          </button>
-        </div>
-      </form>
+      <SearchForm defaultValue={search} placeholder="Buscar por nombre o categoría..." />
 
       <div className="bg-white rounded-2xl shadow-sm border border-cream overflow-hidden">
         <table className="w-full text-sm">
@@ -129,23 +115,11 @@ export default async function ProductsPage({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Link
-              key={p}
-              href={`?page=${p}${search ? `&search=${search}` : ""}`}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                p === currentPage
-                  ? "bg-forest text-cream shadow-sm"
-                  : "bg-white border border-cream text-sage hover:bg-cream-light"
-              }`}
-            >
-              {p}
-            </Link>
-          ))}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        buildHref={(p) => `?page=${p}${search ? `&search=${search}` : ""}`}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { updateOrderStatus, createShipment } from "./actions";
 import { auth } from "@clerk/nextjs/server";
+import Pagination from "@/components/ui/Pagination";
 
 const STATUS_LABEL: Record<string, string> = {
   PENDING: "Pendiente",
@@ -149,23 +150,11 @@ export default async function OrdersPage({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Link
-              key={p}
-              href={`?page=${p}${status ? `&status=${status}` : ""}`}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                p === currentPage
-                  ? "bg-forest text-cream shadow-sm"
-                  : "bg-white border border-cream text-sage hover:bg-cream-light"
-              }`}
-            >
-              {p}
-            </Link>
-          ))}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        buildHref={(p) => `?page=${p}${status ? `&status=${status}` : ""}`}
+      />
     </div>
   );
 }

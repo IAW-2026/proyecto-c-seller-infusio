@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Input from "@/components/admin/Input";
+import Button from "@/components/admin/Button";
+import FormCard from "@/components/admin/FormCard";
+import ErrorAlert from "@/components/admin/ErrorAlert";
 
 interface Seller {
   id: string;
@@ -41,64 +45,35 @@ export default function EditSellerForm({ seller }: { seller: Seller }) {
     }
   }
 
-  const inputClass = "w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow";
-  const labelClass = "block text-sm font-medium text-slate-700 mb-1.5";
-
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-5">
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+    <FormCard onSubmit={handleSubmit}>
+      {error && <ErrorAlert message={error} />}
 
-      <div>
-        <label className={labelClass}>
-          Nombre del negocio <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
-          className={inputClass}
-        />
-      </div>
+      <Input
+        label="Nombre del negocio"
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+        required
+      />
 
-      <div>
-        <label className={labelClass}>
-          Dirección <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={form.address}
-          onChange={(e) => setForm({ ...form, address: e.target.value })}
-          required
-          className={inputClass}
-        />
-      </div>
+      <Input
+        label="Dirección"
+        value={form.address}
+        onChange={(e) => setForm({ ...form, address: e.target.value })}
+        required
+      />
 
-      <div>
-        <label className={labelClass}>
-          Código postal <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={form.postalCode}
-          onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
-          required
-          className={inputClass}
-        />
-      </div>
+      <Input
+        label="Código postal"
+        value={form.postalCode}
+        onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
+        required
+      />
 
       <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
-        >
-          {loading ? "Guardando..." : "Guardar cambios"}
-        </button>
+        <Button type="submit" loading={loading}>
+          Guardar cambios
+        </Button>
         <Link
           href="/admin/sellers"
           className="px-6 py-2.5 rounded-lg text-sm font-medium border border-slate-300 text-slate-600 hover:bg-slate-50 transition-all duration-200"
@@ -106,6 +81,6 @@ export default function EditSellerForm({ seller }: { seller: Seller }) {
           Cancelar
         </Link>
       </div>
-    </form>
+    </FormCard>
   );
 }
