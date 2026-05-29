@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Input from "@/components/dashboard/Input";
+import Button from "@/components/dashboard/Button";
+import FormCard from "@/components/dashboard/FormCard";
 
 type Seller = {
   id: string;
@@ -46,67 +49,41 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
     setLoading(false);
   }
 
-  const inputClass = "w-full border border-cream rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-sage transition-shadow";
-  const labelClass = "block text-sm font-medium text-forest-dark mb-1.5";
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white rounded-2xl shadow-sm border border-cream p-6 space-y-5"
-    >
+    <FormCard onSubmit={handleSubmit}>
       {!seller && (
         <div className="bg-cream border border-sage/30 rounded-xl px-4 py-3 text-sm text-forest">
           Completá tu perfil para que los cálculos de envío usen tu dirección real.
         </div>
       )}
 
-      <div>
-        <label className={labelClass}>
-          Nombre del negocio <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          placeholder="Ej: Infusio Store"
-          className={inputClass}
-        />
-      </div>
+      <Input
+        label="Nombre del negocio"
+        name="name"
+        value={form.name}
+        onChange={handleChange}
+        required
+        placeholder="Ej: Infusio Store"
+      />
 
-      <div>
-        <label className={labelClass}>
-          Dirección de despacho <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          name="address"
-          value={form.address}
-          onChange={handleChange}
-          required
-          placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
-          className={inputClass}
-        />
-      </div>
+      <Input
+        label="Dirección de despacho"
+        name="address"
+        value={form.address}
+        onChange={handleChange}
+        required
+        placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
+      />
 
-      <div>
-        <label className={labelClass}>
-          Código postal <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          name="postalCode"
-          value={form.postalCode}
-          onChange={handleChange}
-          required
-          placeholder="Ej: 1043"
-          className={inputClass}
-        />
-        <p className="text-xs text-sage mt-1.5">
-          Se usa para calcular el costo de envío de cada orden.
-        </p>
-      </div>
+      <Input
+        label="Código postal"
+        name="postalCode"
+        value={form.postalCode}
+        onChange={handleChange}
+        required
+        placeholder="Ej: 1043"
+        hint="Se usa para calcular el costo de envío de cada orden."
+      />
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && (
@@ -114,14 +91,10 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
       )}
 
       <div className="pt-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-forest text-cream px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-forest-dark transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
-        >
-          {loading ? "Guardando..." : "Guardar perfil"}
-        </button>
+        <Button type="submit" loading={loading}>
+          Guardar perfil
+        </Button>
       </div>
-    </form>
+    </FormCard>
   );
 }
