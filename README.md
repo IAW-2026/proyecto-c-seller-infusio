@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Seller App — Infusio
 
-## Getting Started
+Panel de gestión para vendedores del marketplace de infusiones y tés. Permite administrar productos, visualizar y gestionar órdenes, y mantener el perfil del negocio. Incluye panel de administración para gestionar vendedores registrados.
 
-First, run the development server:
+**Deploy:** https://proyecto-c-seller-infusio.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Next.js 15 · Tailwind CSS v4 · Prisma · PostgreSQL (Neon) · Clerk · Cloudinary
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Acceso
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Vendedor
 
-## Learn More
+Ir al link de deploy e iniciar sesión con Google o email a través de Clerk. Cualquier cuenta puede registrarse como vendedor.
 
-To learn more about Next.js, take a look at the following resources:
+### Administrador
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+El acceso de administrador requiere un usuario con el rol `adminSeller` configurado en Clerk (`publicMetadata.roles`). Contactar a la desarrolladora para obtener acceso con una cuenta de prueba.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API REST
 
-## Deploy on Vercel
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/api/seller/purchase_order` | Crear orden de compra (multi-seller) |
+| `GET` | `/api/seller/purchase_orders` | Listar órdenes del vendedor |
+| `GET/PATCH` | `/api/seller/purchase_orders/:id` | Detalle y actualización de orden |
+| `POST` | `/api/seller/orders/:id/payment-confirmed` | Confirmar pago de una orden |
+| `GET` | `/api/seller/orders/:id/payment-url` | Obtener URL de pago |
+| `GET/POST` | `/api/seller/products` | Listar y crear productos |
+| `GET/PATCH/DELETE` | `/api/seller/products/:id` | Detalle, editar y eliminar producto |
+| `GET/PATCH` | `/api/seller/profile` | Perfil del vendedor |
+| `GET/POST` | `/api/admin/sellers` | Gestión de vendedores (admin) |
+| `GET/PATCH/DELETE` | `/api/admin/sellers/:id` | Detalle de vendedor (admin) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Variables de entorno
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ver `.env.example` para la lista completa de variables necesarias.
