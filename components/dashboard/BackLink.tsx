@@ -7,7 +7,7 @@ interface Props {
 
 export default function BackLink({ href, label = "Volver" }: Props) {
   return (
-    <Link href={href} className="text-sage hover:text-forest text-sm transition-colors">
+    <Link href={href} className="text-forest-dark hover:underline text-sm transition-colors">
       ← {label}
     </Link>
   );

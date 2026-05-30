@@ -17,7 +17,7 @@ export default function Button({
   const variants = {
     primary: "bg-forest-dark text-cream px-6 py-2.5 rounded-xl hover:bg-forest shadow-sm hover:shadow-md",
     secondary: "px-6 py-2.5 rounded-xl border border-cream text-forest-dark hover:bg-cream-light",
-    danger: "text-red-400 hover:text-red-600",
+    danger: "text-red-600 hover:text-red-800",
   };
 
   return (

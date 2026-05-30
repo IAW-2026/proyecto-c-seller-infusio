@@ -131,7 +131,7 @@ export default function NewProductPage() {
               <button
                 type="button"
                 onClick={() => open()}
-                className="w-full border-2 border-dashed border-cream rounded-xl px-4 py-6 text-sm text-sage hover:border-sage hover:text-forest transition-all duration-200"
+                className="w-full border-2 border-dashed border-sage rounded-xl px-4 py-6 text-sm text-forest-dark hover:border-forest transition-all duration-200"
               >
                 {imageUrl ? "✓ Imagen cargada — click para cambiar" : "Click para subir imagen"}
               </button>
@@ -144,7 +144,7 @@ export default function NewProductPage() {
           )}
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-red-600 text-sm">{error}</p>}
 
         <div className="flex gap-3 pt-2">
           <Button type="submit" loading={loading}>
@@ -152,7 +152,7 @@ export default function NewProductPage() {
           </Button>
           <Link
             href="/dashboard/products"
-            className="px-6 py-2.5 rounded-xl text-sm font-medium border border-cream text-sage hover:bg-cream-light transition-all duration-200"
+            className="px-6 py-2.5 rounded-xl text-sm font-medium border border-cream text-forest-dark hover:bg-cream-light transition-all duration-200"
           >
             Cancelar
           </Link>
