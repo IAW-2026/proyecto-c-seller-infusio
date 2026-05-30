@@ -16,7 +16,7 @@ Ir al link de deploy e iniciar sesión con Google o email a través de Clerk. Cu
 
 ### Administrador
 
-El acceso de administrador requiere un usuario con el rol `adminSeller` configurado en Clerk (`publicMetadata.roles`). Contactar a la desarrolladora para obtener acceso con una cuenta de prueba.
+El acceso de administrador requiere un usuario con el rol `adminSeller` configurado en Clerk (`publicMetadata.roles`). Contactar para obtener acceso con una cuenta de prueba.
 
 ## API REST
 
