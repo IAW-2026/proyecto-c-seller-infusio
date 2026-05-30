@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   return (
     <div>
       <h2 className="text-2xl font-bold text-forest-dark mb-1">Resumen</h2>
-      <p className="text-forest-dark/70 mb-8 text-sm">Bienvenida al panel de vendedor de Infusio.</p>
+      <p className="text-forest-dark mb-8 text-sm">Bienvenida al panel de vendedor de Infusio.</p>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((s) => (
