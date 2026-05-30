@@ -52,7 +52,7 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
   return (
     <FormCard onSubmit={handleSubmit}>
       {!seller && (
-        <div className="bg-cream border border-sage/30 rounded-xl px-4 py-3 text-sm text-forest">
+        <div className="bg-cream border border-sage/30 rounded-xl px-4 py-3 text-sm text-forest-dark">
           Completá tu perfil para que los cálculos de envío usen tu dirección real.
         </div>
       )}
@@ -87,7 +87,7 @@ export default function ProfileForm({ seller }: { seller: Seller }) {
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && (
-        <p className="text-forest text-sm font-medium">✓ Perfil guardado correctamente.</p>
+        <p className="text-forest-dark text-sm font-medium">✓ Perfil guardado correctamente.</p>
       )}
 
       <div className="pt-2">
