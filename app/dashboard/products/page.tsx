@@ -44,7 +44,7 @@ export default async function ProductsPage({
         <h2 className="text-2xl font-bold text-forest-dark">Productos</h2>
         <Link
           href="/dashboard/products/new"
-          className="bg-forest text-cream px-4 py-2 rounded-xl text-sm font-medium hover:bg-forest-dark transition-all duration-200 shadow-sm hover:shadow-md"
+          className="bg-forest-dark text-cream px-4 py-2 rounded-xl text-sm font-medium hover:bg-forest transition-all duration-200 shadow-sm hover:shadow-md"
         >
           + Nuevo producto
         </Link>
@@ -56,17 +56,17 @@ export default async function ProductsPage({
         <table className="w-full text-sm">
           <thead className="bg-cream-light border-b border-cream">
             <tr>
-              <th className="text-left px-6 py-3.5 text-forest font-semibold">Producto</th>
-              <th className="text-left px-6 py-3.5 text-forest font-semibold hidden sm:table-cell">Categoría</th>
-              <th className="text-right px-6 py-3.5 text-forest font-semibold">Precio</th>
-              <th className="text-right px-6 py-3.5 text-forest font-semibold hidden sm:table-cell">Stock</th>
+              <th className="text-left px-6 py-3.5 text-forest-dark font-semibold">Producto</th>
+              <th className="text-left px-6 py-3.5 text-forest-dark font-semibold hidden sm:table-cell">Categoría</th>
+              <th className="text-right px-6 py-3.5 text-forest-dark font-semibold">Precio</th>
+              <th className="text-right px-6 py-3.5 text-forest-dark font-semibold hidden sm:table-cell">Stock</th>
               <th className="px-6 py-3.5"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-cream/50">
             {products.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-sage">
+                <td colSpan={5} className="px-6 py-12 text-center text-forest-dark">
                   No se encontraron productos.
                 </td>
               </tr>
@@ -85,7 +85,7 @@ export default async function ProductsPage({
                       <span className="font-medium text-forest-dark">{p.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sage hidden sm:table-cell">{p.category || "—"}</td>
+                  <td className="px-6 py-4 text-forest-dark hidden sm:table-cell">{p.category || "—"}</td>
                   <td className="px-6 py-4 text-right font-medium text-forest-dark">
                     ${p.price.toLocaleString("es-AR")}
                   </td>
@@ -103,7 +103,7 @@ export default async function ProductsPage({
                   <td className="px-6 py-4 text-right">
                     <Link
                       href={`/dashboard/products/${p.id}`}
-                      className="text-forest hover:text-forest-dark text-sm font-medium hover:underline transition-colors"
+                      className="text-forest-dark text-sm font-medium hover:underline transition-colors"
                     >
                       Editar
                     </Link>
