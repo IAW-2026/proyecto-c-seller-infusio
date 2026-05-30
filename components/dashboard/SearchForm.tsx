@@ -16,7 +16,7 @@ export default function SearchForm({ defaultValue = "", placeholder = "Buscar...
         />
         <button
           type="submit"
-          className="bg-forest text-cream px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-forest-dark transition-all duration-200"
+          className="bg-forest-dark text-cream px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-forest transition-all duration-200"
         >
           Buscar
         </button>
