@@ -22,6 +22,40 @@ const STATUS_STYLE: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-800",
 };
 
+function OrderActions({ o }: { o: { id: string; status: string; shippingId: string | null } }) {
+  return (
+    <>
+      <Link
+        href={`/dashboard/orders/${o.id}`}
+        className="text-forest-dark text-sm font-medium hover:underline transition-colors"
+      >
+        Ver
+      </Link>
+      {o.status === "PAYMENT_CONFIRMED" && !o.shippingId && (
+        <form action={createShipment.bind(null, o.id)}>
+          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
+            Crear envío
+          </button>
+        </form>
+      )}
+      {o.status === "PAYMENT_CONFIRMED" && o.shippingId && (
+        <form action={updateOrderStatus.bind(null, o.id, "PREPARING")}>
+          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
+            Comenzar preparación
+          </button>
+        </form>
+      )}
+      {o.status === "PREPARING" && (
+        <form action={updateOrderStatus.bind(null, o.id, "DISPATCHED")}>
+          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
+            Marcar como despachado
+          </button>
+        </form>
+      )}
+    </>
+  );
+}
+
 export default async function OrdersPage({
   searchParams,
 }: {
@@ -70,11 +104,50 @@ export default async function OrdersPage({
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-cream overflow-hidden">
-        <table className="w-full text-sm">
+
+        {/* Mobile: cards */}
+        <div className="sm:hidden">
+          {orders.length === 0 ? (
+            <p className="px-6 py-12 text-center text-forest-dark">No hay órdenes.</p>
+          ) : (
+            <div className="divide-y divide-cream/50">
+              {orders.map((o) => (
+                <div key={o.id} className="p-4 hover:bg-cream-light transition-colors duration-150">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="font-mono text-xs text-forest-dark">{o.id.slice(0, 8)}...</p>
+                      <p className="text-xs text-forest-dark mt-1">
+                        {o.createdAt.toLocaleDateString("es-AR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_STYLE[o.status]}`}>
+                      {STATUS_LABEL[o.status]}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-forest-dark">
+                      ${o.totalAmount.toLocaleString("es-AR")}
+                    </span>
+                    <div className="flex gap-3 items-center flex-wrap justify-end">
+                      <OrderActions o={o} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: tabla */}
+        <table className="hidden sm:table w-full text-sm">
           <thead className="bg-cream-light border-b border-cream">
             <tr>
               <th className="text-left px-6 py-3.5 text-forest-dark font-semibold">ID Orden</th>
-              <th className="text-left px-6 py-3.5 text-forest-dark font-semibold hidden sm:table-cell">Fecha</th>
+              <th className="text-left px-6 py-3.5 text-forest-dark font-semibold">Fecha</th>
               <th className="text-right px-6 py-3.5 text-forest-dark font-semibold">Total</th>
               <th className="text-left px-6 py-3.5 text-forest-dark font-semibold">Estado</th>
               <th className="text-left px-6 py-3.5 text-forest-dark font-semibold hidden md:table-cell">Envío</th>
@@ -94,7 +167,7 @@ export default async function OrdersPage({
                   <td className="px-6 py-4 font-mono text-forest-dark text-xs">
                     {o.id.slice(0, 8)}...
                   </td>
-                  <td className="px-6 py-4 text-forest-dark hidden sm:table-cell">
+                  <td className="px-6 py-4 text-forest-dark">
                     {o.createdAt.toLocaleDateString("es-AR", {
                       day: "2-digit",
                       month: "2-digit",
@@ -114,33 +187,7 @@ export default async function OrdersPage({
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-3 justify-end items-center flex-wrap">
-                      <Link
-                        href={`/dashboard/orders/${o.id}`}
-                        className="text-forest-dark text-sm font-medium hover:underline transition-colors"
-                      >
-                        Ver
-                      </Link>
-                      {o.status === "PAYMENT_CONFIRMED" && !o.shippingId && (
-                        <form action={createShipment.bind(null, o.id)}>
-                          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
-                            Crear envío
-                          </button>
-                        </form>
-                      )}
-                      {o.status === "PAYMENT_CONFIRMED" && o.shippingId && (
-                        <form action={updateOrderStatus.bind(null, o.id, "PREPARING")}>
-                          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
-                            Comenzar preparación
-                          </button>
-                        </form>
-                      )}
-                      {o.status === "PREPARING" && (
-                        <form action={updateOrderStatus.bind(null, o.id, "DISPATCHED")}>
-                          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
-                            Marcar como despachado
-                          </button>
-                        </form>
-                      )}
+                      <OrderActions o={o} />
                     </div>
                   </td>
                 </tr>
