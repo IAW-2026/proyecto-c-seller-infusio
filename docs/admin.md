@@ -2,6 +2,8 @@
 
 Accesible en `/admin/sellers`. Solo disponible para usuarios con el rol `adminSeller` en Clerk.
 
+![Panel de administración](./images/admin-dashboard.png)
+
 ## Funcionalidades
 
 - **Listado de vendedores** con nombre, dirección y código postal.
@@ -10,6 +12,10 @@ Accesible en `/admin/sellers`. Solo disponible para usuarios con el rol `adminSe
 - **Crear vendedor** — formulario en `/admin/sellers/new`.
 - **Editar vendedor** — formulario en `/admin/sellers/[id]/edit`.
 - **Eliminar vendedor** — baja definitiva con confirmación.
+
+| | |
+|---|---|
+| ![Nuevo vendedor](./images/admin-nuevo-vendedor.png) | ![Editar vendedor](./images/admin-editar-vendedor.png) |
 
 ## Acceso
 

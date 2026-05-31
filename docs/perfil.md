@@ -1,5 +1,7 @@
 # Perfil del vendedor
 
+![Perfil del vendedor](./images/perfil-vendedor.png)
+
 El vendedor configura su perfil desde `/dashboard/profile`.
 
 ## Campos
