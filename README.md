@@ -17,20 +17,16 @@ Next.js 15 · Tailwind CSS v4 · Prisma · PostgreSQL (Neon) · Clerk · Cloudin
 
 También se puede iniciar sesión con Google. Cualquier cuenta de Google queda registrada como vendedor.
 
-## API REST
+## Documentación
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `POST` | `/api/seller/purchase_order` | Crear orden de compra (multi-seller) |
-| `GET` | `/api/seller/purchase_orders` | Listar órdenes del vendedor |
-| `GET/PATCH` | `/api/seller/purchase_orders/:id` | Detalle y actualización de orden |
-| `POST` | `/api/seller/orders/:id/payment-confirmed` | Confirmar pago de una orden |
-| `GET` | `/api/seller/orders/:id/payment-url` | Obtener URL de pago |
-| `GET/POST` | `/api/seller/products` | Listar y crear productos |
-| `GET/PATCH/DELETE` | `/api/seller/products/:id` | Detalle, editar y eliminar producto |
-| `GET/PATCH` | `/api/seller/profile` | Perfil del vendedor |
-| `GET/POST` | `/api/admin/sellers` | Gestión de vendedores (admin) |
-| `GET/PATCH/DELETE` | `/api/admin/sellers/:id` | Detalle de vendedor (admin) |
+Ver la carpeta [`/docs`](./docs) para documentación detallada de cada funcionalidad:
+
+- [Productos](./docs/productos.md)
+- [Órdenes](./docs/ordenes.md)
+- [Perfil del vendedor](./docs/perfil.md)
+- [Panel de administración](./docs/admin.md)
+- [API REST](./docs/api.md)
+- [Autenticación y roles](./docs/autenticacion.md)
 
 ## Variables de entorno
 
