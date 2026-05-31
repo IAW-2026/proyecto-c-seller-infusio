@@ -11,11 +11,13 @@ El vendedor puede crear, editar y dar de baja sus productos desde `/dashboard/pr
 - **Paginación** de 7 productos por página (parámetro `page` en la URL).
 - Badge de stock con colores: verde (>5), amarillo (1–5), rojo (0).
 
-## Crear producto
+## Crear y editar producto
 
-![Crear nuevo producto](./images/crear-nuevo-producto.png)
+| | |
+|---|---|
+| ![Crear nuevo producto](./images/crear-nuevo-producto.png) | ![Editar producto](./images/editar-producto.png) |
 
-Formulario en `/dashboard/products/new` con los campos:
+Formulario en `/dashboard/products/new` (crear) y `/dashboard/products/[id]` (editar) con los campos:
 
 | Campo | Requerido | Descripción |
 |-------|-----------|-------------|
@@ -26,9 +28,7 @@ Formulario en `/dashboard/products/new` con los campos:
 | Categoría | — | Texto libre (ej: "Té verde", "Mate") |
 | Imagen | — | Subida via Cloudinary |
 
-## Editar producto
-
-Mismo formulario en `/dashboard/products/[id]`. Incluye botón de eliminación (baja lógica: `isActive = false`).
+El formulario de edición incluye además el botón **Eliminar producto** (baja lógica: `isActive = false`).
 
 ## Imagen
 
