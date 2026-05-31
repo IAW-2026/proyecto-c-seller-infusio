@@ -38,6 +38,13 @@ export default async function ProductsPage({
 
   const totalPages = Math.ceil(total / limit);
 
+  const stockBadge = (stock: number) =>
+    stock === 0
+      ? "bg-red-100 text-red-700"
+      : stock <= 5
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-green-100 text-green-700";
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -53,13 +60,54 @@ export default async function ProductsPage({
       <SearchForm defaultValue={search} placeholder="Buscar por nombre o categoría..." />
 
       <div className="bg-white rounded-2xl shadow-sm border border-cream overflow-hidden">
-        <table className="w-full text-sm">
+
+        {/* Mobile: cards */}
+        <div className="sm:hidden">
+          {products.length === 0 ? (
+            <p className="px-6 py-12 text-center text-forest-dark">No se encontraron productos.</p>
+          ) : (
+            <div className="divide-y divide-cream/50">
+              {products.map((p) => (
+                <div key={p.id} className="p-4 flex items-center gap-3 hover:bg-cream-light transition-colors duration-150">
+                  <div className="relative w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden bg-cream border border-cream">
+                    {p.imageUrl ? (
+                      <Image src={p.imageUrl} alt={p.name} fill className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-lg">🌿</div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-forest-dark truncate">{p.name}</p>
+                    <p className="text-xs text-forest-dark mt-0.5">{p.category || "Sin categoría"}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-sm font-semibold text-forest-dark">
+                        ${p.price.toLocaleString("es-AR")}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-lg text-xs font-medium ${stockBadge(p.stock)}`}>
+                        {p.stock} en stock
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/dashboard/products/${p.id}`}
+                    className="text-forest-dark text-sm font-medium hover:underline transition-colors flex-shrink-0"
+                  >
+                    Editar
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: tabla */}
+        <table className="hidden sm:table w-full text-sm">
           <thead className="bg-cream-light border-b border-cream">
             <tr>
               <th className="text-left px-6 py-3.5 text-forest-dark font-semibold">Producto</th>
-              <th className="text-left px-6 py-3.5 text-forest-dark font-semibold hidden sm:table-cell">Categoría</th>
+              <th className="text-left px-6 py-3.5 text-forest-dark font-semibold">Categoría</th>
               <th className="text-right px-6 py-3.5 text-forest-dark font-semibold">Precio</th>
-              <th className="text-right px-6 py-3.5 text-forest-dark font-semibold hidden sm:table-cell">Stock</th>
+              <th className="text-right px-6 py-3.5 text-forest-dark font-semibold hidden md:table-cell">Stock</th>
               <th className="px-6 py-3.5"></th>
             </tr>
           </thead>
@@ -79,24 +127,18 @@ export default async function ProductsPage({
                         {p.imageUrl ? (
                           <Image src={p.imageUrl} alt={p.name} fill className="object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-sage text-lg">🌿</div>
+                          <div className="w-full h-full flex items-center justify-center text-lg">🌿</div>
                         )}
                       </div>
                       <span className="font-medium text-forest-dark">{p.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-forest-dark hidden sm:table-cell">{p.category || "—"}</td>
+                  <td className="px-6 py-4 text-forest-dark">{p.category || "—"}</td>
                   <td className="px-6 py-4 text-right font-medium text-forest-dark">
                     ${p.price.toLocaleString("es-AR")}
                   </td>
-                  <td className="px-6 py-4 text-right hidden sm:table-cell">
-                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                      p.stock === 0
-                        ? "bg-red-100 text-red-700"
-                        : p.stock <= 5
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-green-100 text-green-700"
-                    }`}>
+                  <td className="px-6 py-4 text-right hidden md:table-cell">
+                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${stockBadge(p.stock)}`}>
                       {p.stock}
                     </span>
                   </td>
