@@ -13,7 +13,7 @@ Next.js 15 · Tailwind CSS v4 · Prisma · PostgreSQL (Neon) · Clerk · Cloudin
 | Rol | Email | Contraseña |
 |-----|-------|------------|
 | Vendedor | vendedor@infusio.com | Infusio2024! |
-| Administrador | seller_admin@infusio.com | Infusio2024! |
+| Administrador | seller_admin@infusio.com | #Infusio!!2026 |
 
 También se puede iniciar sesión con Google. Cualquier cuenta de Google queda registrada como vendedor.
 
