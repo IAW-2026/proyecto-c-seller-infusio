@@ -60,9 +60,6 @@ Webhook llamado por la Payments App para notificar el resultado del pago.
 
 **Respuesta:** `200` con `{ ok: true }`.
 
-### `POST /api/seller/orders/:id/payment-confirmed` — público
-Versión alternativa del webhook anterior, sin el registro automático de envío.
-
 ### `GET /api/seller/orders/:id/payment-url` — público
 Devuelve la URL de checkout para que el comprador complete el pago.
 
