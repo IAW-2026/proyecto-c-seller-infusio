@@ -3,6 +3,9 @@
 ## Páginas de error
 
 ### 404 — Página no encontrada
+
+![Página 404](./images/404-page-not-found.png)
+
 `app/not-found.tsx` — se muestra automáticamente cuando Next.js no encuentra una ruta, o cuando se llama a `notFound()` explícitamente (por ejemplo, al intentar acceder al detalle de una orden que no existe).
 
 ### Error general

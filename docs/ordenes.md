@@ -2,6 +2,8 @@
 
 Las órdenes se crean desde la Buyer App y llegan a esta app via la API REST. El vendedor las gestiona desde `/dashboard/orders`.
 
+![Listado de órdenes](./images/purchase-order.png)
+
 ## Estados y flujo
 
 ```
@@ -31,6 +33,10 @@ Las acciones aparecen según el estado actual de la orden:
 ## Costo de envío
 
 El costo se calcula **al momento de crear la orden** (no al despachar). La Buyer App llama a `POST /api/seller/purchase_order`, que consulta el precio a la Shipping App usando los códigos postales de origen y destino. El total ya incluye el envío.
+
+## Detalle de orden
+
+![Detalle de orden](./images/purchase-order-detalle.png)
 
 ## Listado
 

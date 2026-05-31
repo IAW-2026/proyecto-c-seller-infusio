@@ -1,5 +1,7 @@
 # Dashboard — Resumen
 
+![Dashboard](./images/dashboard.png)
+
 Página principal del panel de vendedor (`/dashboard`). Muestra un resumen del estado actual del negocio en tiempo real, calculado desde la base de datos en cada visita (Server Component).
 
 ## Métricas
