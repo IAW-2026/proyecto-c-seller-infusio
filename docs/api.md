@@ -44,7 +44,7 @@ Actualiza el estado de una orden.
 
 ## Confirmación de pago
 
-### `POST /api/orders/:id/payment-confirmed` — público
+### `POST /api/seller/orders/:id/payment-confirmed` — público
 Webhook llamado por la Payments App para notificar el resultado del pago.
 
 **Body:**
