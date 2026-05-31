@@ -44,8 +44,24 @@ Actualiza el estado de una orden.
 
 ## Confirmación de pago
 
+### `POST /api/orders/:id/payment-confirmed` — público
+Webhook llamado por la Payments App para notificar el resultado del pago.
+
+**Body:**
+```json
+{
+  "payment_order_id": "string",
+  "status": "accepted" | "cancelled"
+}
+```
+
+- Si `status = "accepted"`: cambia el estado de la orden a `PAYMENT_CONFIRMED`, guarda el `payment_order_id` y registra automáticamente el envío en la Shipping App (guarda el `shippingId` resultante).
+- Si `status = "cancelled"`: cambia el estado a `CANCELLED`.
+
+**Respuesta:** `200` con `{ ok: true }`.
+
 ### `POST /api/seller/orders/:id/payment-confirmed` — público
-Llamado por la Payments App cuando el comprador completa el pago. Cambia el estado de la orden a `PAYMENT_CONFIRMED`.
+Versión alternativa del webhook anterior, sin el registro automático de envío.
 
 ### `GET /api/seller/orders/:id/payment-url` — público
 Devuelve la URL de checkout para que el comprador complete el pago.
