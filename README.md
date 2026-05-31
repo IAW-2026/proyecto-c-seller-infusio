@@ -21,12 +21,15 @@ También se puede iniciar sesión con Google. Cualquier cuenta de Google queda r
 
 Ver la carpeta [`/docs`](./docs) para documentación detallada de cada funcionalidad:
 
+- [Dashboard](./docs/dashboard.md)
 - [Productos](./docs/productos.md)
 - [Órdenes](./docs/ordenes.md)
 - [Perfil del vendedor](./docs/perfil.md)
 - [Panel de administración](./docs/admin.md)
 - [API REST](./docs/api.md)
+- [APIs externas](./docs/apis-externas.md)
 - [Autenticación y roles](./docs/autenticacion.md)
+- [Errores y validaciones](./docs/errores-y-validaciones.md)
 
 ## Variables de entorno
 
