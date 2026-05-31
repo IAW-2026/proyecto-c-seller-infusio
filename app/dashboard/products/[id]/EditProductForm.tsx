@@ -82,7 +82,7 @@ export default function EditProductForm({ product }: { product: Product }) {
   const labelClass = "block text-sm font-medium text-forest-dark mb-1.5";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <BackLink href="/dashboard/products" />
@@ -94,93 +94,103 @@ export default function EditProductForm({ product }: { product: Product }) {
       </div>
 
       <FormCard onSubmit={handleSubmit}>
-        <Input
-          label="Nombre"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
 
-        <div>
-          <label className={labelClass}>Descripción</label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            rows={3}
-            className={inputClass}
-          />
-        </div>
+          {/* Columna izquierda: nombre, descripción, imagen */}
+          <div className="space-y-4">
+            <Input
+              label="Nombre"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Precio"
-            type="number"
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            required
-            min="0"
-            step="0.01"
-          />
-          <Input
-            label="Stock"
-            type="number"
-            name="stock"
-            value={form.stock}
-            onChange={handleChange}
-            required
-            min="0"
-          />
-        </div>
-
-        <Input
-          label="Categoría"
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-        />
-
-        <div>
-          <label className={labelClass}>Imagen del producto</label>
-          <CldUploadWidget
-            uploadPreset="ml_default"
-            onSuccess={(result) => {
-              if (result.info && typeof result.info === "object" && "secure_url" in result.info) {
-                setImageUrl(result.info.secure_url as string);
-              }
-            }}
-          >
-            {({ open }) => (
-              <button
-                type="button"
-                onClick={() => open()}
-                className="w-full border-2 border-dashed border-sage rounded-xl px-4 py-6 text-sm text-forest-dark hover:border-forest transition-all duration-200"
-              >
-                {imageUrl ? "✓ Imagen cargada — click para cambiar" : "Click para subir imagen"}
-              </button>
-            )}
-          </CldUploadWidget>
-          {imageUrl && (
-            <div className="mt-3 relative w-32 h-32">
-              <Image src={imageUrl} alt="Preview del producto" fill className="object-cover rounded-xl border border-cream" />
+            <div>
+              <label className={labelClass}>Descripción</label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                rows={2}
+                className={inputClass}
+              />
             </div>
-          )}
-        </div>
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+            <div>
+              <label className={labelClass}>Imagen del producto</label>
+              <CldUploadWidget
+                uploadPreset="ml_default"
+                onSuccess={(result) => {
+                  if (result.info && typeof result.info === "object" && "secure_url" in result.info) {
+                    setImageUrl(result.info.secure_url as string);
+                  }
+                }}
+              >
+                {({ open }) => (
+                  <button
+                    type="button"
+                    onClick={() => open()}
+                    className="w-full border-2 border-dashed border-sage rounded-xl px-4 py-3 text-sm text-forest-dark hover:border-forest transition-all duration-200"
+                  >
+                    {imageUrl ? "✓ Imagen cargada — click para cambiar" : "Click para subir imagen"}
+                  </button>
+                )}
+              </CldUploadWidget>
+              {imageUrl && (
+                <div className="mt-3 relative w-24 h-24">
+                  <Image src={imageUrl} alt="Preview del producto" fill className="object-cover rounded-xl border border-cream" />
+                </div>
+              )}
+            </div>
+          </div>
 
-        <div className="flex gap-3 pt-2">
-          <Button type="submit" loading={loading}>
-            Guardar cambios
-          </Button>
-          <Link
-            href="/dashboard/products"
-            className="px-6 py-2.5 rounded-xl text-sm font-medium border border-cream text-forest-dark hover:bg-cream-light transition-all duration-200"
-          >
-            Cancelar
-          </Link>
+          {/* Columna derecha: precio, stock, categoría, acciones */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Precio"
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                required
+                min="0"
+                step="0.01"
+              />
+              <Input
+                label="Stock"
+                type="number"
+                name="stock"
+                value={form.stock}
+                onChange={handleChange}
+                required
+                min="0"
+              />
+            </div>
+
+            <Input
+              label="Categoría"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+            />
+
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+
+            <div className="flex gap-3 pt-2">
+              <Button type="submit" loading={loading}>
+                Guardar cambios
+              </Button>
+              <Link
+                href="/dashboard/products"
+                className="px-6 py-2.5 rounded-xl text-sm font-medium border border-cream text-forest-dark hover:bg-cream-light transition-all duration-200"
+              >
+                Cancelar
+              </Link>
+            </div>
+          </div>
+
         </div>
       </FormCard>
     </div>
