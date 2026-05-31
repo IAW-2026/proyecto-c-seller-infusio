@@ -8,15 +8,14 @@ Panel de gestión para vendedores del marketplace de infusiones y tés. Permite 
 
 Next.js 15 · Tailwind CSS v4 · Prisma · PostgreSQL (Neon) · Clerk · Cloudinary
 
-## Acceso
+## Credenciales de acceso
 
-### Vendedor
+| Rol | Email | Contraseña |
+|-----|-------|------------|
+| Vendedor | vendedor@infusio.com | Infusio2024! |
+| Administrador | seller_admin@infusio.com | Infusio2024! |
 
-Ir al link de deploy e iniciar sesión con Google o email a través de Clerk. Cualquier cuenta puede registrarse como vendedor.
-
-### Administrador
-
-El acceso de administrador requiere un usuario con el rol `adminSeller` configurado en Clerk (`publicMetadata.roles`). Contactar para obtener acceso con una cuenta de prueba.
+También se puede iniciar sesión con Google. Cualquier cuenta de Google queda registrada como vendedor.
 
 ## API REST
 
