@@ -6,8 +6,8 @@
 
 | Rol | Email | Contraseña |
 |-----|-------|------------|
-| Vendedor | seller+clerktest@iaw.com | iawuser# |
-| Administrador | selleradmin+clerktest@iaw.com | iawuser# |
+| Vendedor | seller+clerk_test@iaw.com | iawuser# |
+| Administrador | selleradmin+clerk_test@iaw.com | iawuser# |
 
 También se puede iniciar sesión con Google. Cualquier cuenta de Google queda registrada como vendedor.
 
