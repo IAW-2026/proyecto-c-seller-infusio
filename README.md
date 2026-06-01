@@ -31,6 +31,3 @@ Ver la carpeta [`/docs`](./docs) para documentación detallada de cada funcional
 - [Autenticación y roles](./docs/autenticacion.md)
 - [Errores y validaciones](./docs/errores-y-validaciones.md)
 
-## Variables de entorno
-
-Ver `.env.example` para la lista completa de variables necesarias.
