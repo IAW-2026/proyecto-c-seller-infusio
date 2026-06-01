@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { sellerProfileSchema } from "@/lib/schemas";
 
 export async function GET() {
   const { userId } = await auth();
@@ -22,15 +23,13 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
-  const { name, address, postalCode } = body;
-
-  if (!name || !address || !postalCode) {
-    return NextResponse.json(
-      { error: "Faltan campos requeridos: nombre, dirección y código postal" },
-      { status: 400 }
-    );
+  const result = sellerProfileSchema.safeParse(body);
+  if (!result.success) {
+    const errors = result.error.issues.map((i) => i.message).join(", ");
+    return NextResponse.json({ error: errors }, { status: 400 });
   }
 
+  const { name, address, postalCode } = result.data;
   const seller = await prisma.seller.upsert({
     where: { clerkId: userId },
     update: { name, address, postalCode },
