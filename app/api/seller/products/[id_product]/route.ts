@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { productUpdateSchema } from "@/lib/schemas";
 
 export async function GET(
   request: Request,
@@ -35,10 +36,15 @@ export async function PATCH(
   try {
     const { id_product } = await params;
     const body = await request.json();
+    const result = productUpdateSchema.safeParse(body);
+    if (!result.success) {
+      const errors = result.error.issues.map((i) => i.message).join(", ");
+      return NextResponse.json({ error: errors }, { status: 400 });
+    }
 
     const product = await prisma.product.update({
       where: { id: id_product },
-      data: body,
+      data: result.data,
     });
 
     return NextResponse.json({ product });

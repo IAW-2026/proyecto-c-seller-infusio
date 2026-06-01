@@ -30,5 +30,5 @@ Incluye un panel de administración separado para gestionar los vendedores regis
 - La autenticación está manejada con Clerk. Los roles (vendedor / admin) se asignan mediante `publicMetadata` en el usuario de Clerk.
 - Las imágenes de productos se suben a Cloudinary mediante un widget integrado en el formulario.
 - La documentación detallada de cada funcionalidad está en la carpeta [`/docs`](./docs):
-  - [Dashboard](./docs/dashboard.md) · [Productos](./docs/productos.md) · [Órdenes](./docs/ordenes.md) · [Perfil del vendedor](./docs/perfil.md) · [Panel de administración](./docs/admin.md) · [API REST](./docs/api.md) · [APIs externas](./docs/apis-externas.md) · [Autenticación y roles](./docs/autenticacion.md) · [Errores y validaciones](./docs/errores-y-validaciones.md)
+  - [Dashboard](./docs/dashboard.md) · [Productos](./docs/productos.md) · [Órdenes](./docs/ordenes.md) · [Perfil del vendedor](./docs/perfil.md) · [Panel de administración](./docs/admin.md) · [API REST](./docs/api.md) · [APIs externas](./docs/apis-externas.md) · [Autenticación y roles](./docs/autenticacion.md) · [Errores y validaciones](./docs/errores-y-validaciones.md) · [Validación del lado del servidor](./docs/validacion-servidor.md)
 

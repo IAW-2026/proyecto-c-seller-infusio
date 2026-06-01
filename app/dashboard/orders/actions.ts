@@ -3,11 +3,17 @@
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { orderStatusSchema } from "@/lib/schemas";
 
 export async function updateOrderStatus(orderId: string, newStatus: string) {
+  const result = orderStatusSchema.safeParse(newStatus);
+  if (!result.success) {
+    throw new Error("Estado de orden inválido");
+  }
+
   await prisma.order.update({
     where: { id: orderId },
-    data: { status: newStatus as never },
+    data: { status: result.data },
   });
 
   revalidatePath("/dashboard/orders");

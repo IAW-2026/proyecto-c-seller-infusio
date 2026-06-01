@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { productCreateSchema } from "@/lib/schemas";
 
 export async function GET(request: Request) {
   try {
@@ -61,31 +62,15 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, description, price, stock, imageUrl, category } = body;
-
-    if (!name || price == null || stock == null) {
-      return NextResponse.json(
-        { error: "Faltan campos requeridos: name, price, stock" },
-        { status: 400 }
-      );
-    }
-    if (price < 0 || stock < 0) {
-      return NextResponse.json(
-        { error: "Precio y stock deben ser mayores a 0" },
-        { status: 400 }
-      );
+    const result = productCreateSchema.safeParse(body);
+    if (!result.success) {
+      const errors = result.error.issues.map((i) => i.message).join(", ");
+      return NextResponse.json({ error: errors }, { status: 400 });
     }
 
+    const { name, description, price, stock, imageUrl, category } = result.data;
     const product = await prisma.product.create({
-      data: {
-        sellerId: seller.id,
-        name,
-        description,
-        price: parseFloat(price),
-        stock: parseInt(stock),
-        imageUrl,
-        category,
-      },
+      data: { sellerId: seller.id, name, description, price, stock, imageUrl, category },
     });
 
     return NextResponse.json({ product }, { status: 201 });
