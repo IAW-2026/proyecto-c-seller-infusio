@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const PRODUCT_CATEGORIES = ["Café", "Infusiones", "Accesorios & Máquinas"] as const;
+
 export const productCreateSchema = z.object({
   name: z.string().min(1, "El nombre es requerido").max(100),
   description: z.string().max(500).optional(),
@@ -9,7 +11,7 @@ export const productCreateSchema = z.object({
     .int("El stock debe ser un número entero")
     .nonnegative("El stock no puede ser negativo"),
   imageUrl: z.string().optional(),
-  category: z.string().max(50).optional(),
+  categories: z.array(z.string()).default([]),
 });
 
 export const productUpdateSchema = z
@@ -19,7 +21,7 @@ export const productUpdateSchema = z
     price: z.number().positive(),
     stock: z.number().int().nonnegative(),
     imageUrl: z.string().nullable(),
-    category: z.string().max(50).nullable(),
+    categories: z.array(z.string()),
   })
   .partial()
   .strict();

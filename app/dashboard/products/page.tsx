@@ -24,10 +24,7 @@ export default async function ProductsPage({
     sellerId: seller?.id,
     isActive: true,
     ...(search && {
-      OR: [
-        { name: { contains: search, mode: "insensitive" as const } },
-        { category: { contains: search, mode: "insensitive" as const } },
-      ],
+      name: { contains: search, mode: "insensitive" as const },
     }),
   };
 
@@ -78,7 +75,7 @@ export default async function ProductsPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-forest-dark truncate">{p.name}</p>
-                    <p className="text-xs text-forest-dark mt-0.5">{p.category || "Sin categoría"}</p>
+                    <p className="text-xs text-forest-dark mt-0.5">{p.categories[0] || "Sin categoría"}</p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-sm font-semibold text-forest-dark">
                         ${p.price.toLocaleString("es-AR")}
@@ -133,7 +130,7 @@ export default async function ProductsPage({
                       <span className="font-medium text-forest-dark">{p.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-forest-dark">{p.category || "—"}</td>
+                  <td className="px-6 py-4 text-forest-dark">{p.categories[0] || "—"}</td>
                   <td className="px-6 py-4 text-right font-medium text-forest-dark">
                     ${p.price.toLocaleString("es-AR")}
                   </td>
