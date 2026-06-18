@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import BackLink from "@/components/dashboard/BackLink";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -60,10 +61,19 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <h3 className="text-sm font-semibold text-forest-dark mb-3">Productos</h3>
           <div className="divide-y divide-cream/60">
             {order.items.map((item) => (
-              <div key={item.id} className="py-2.5 flex justify-between items-center">
-                <div>
-                  <p className="text-sm font-medium text-forest-dark">{item.product.name}</p>
-                  <p className="text-xs text-forest-dark mt-0.5">Cantidad: {item.quantity}</p>
+              <div key={item.id} className="py-2.5 flex justify-between items-center gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="relative w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden bg-cream border border-cream">
+                    {item.product.imageUrl ? (
+                      <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-lg">🌿</div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-forest-dark">{item.product.name}</p>
+                    <p className="text-xs text-forest-dark mt-0.5">Cantidad: {item.quantity}</p>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-forest-dark">
