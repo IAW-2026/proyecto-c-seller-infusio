@@ -22,18 +22,26 @@ model Seller {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  sellerId    String?
-  seller      Seller?  @relation(fields: [sellerId], references: [id])
-  name        String
-  description String?
-  price       Float
-  stock       Int      @default(0)
-  imageUrl    String?
-  category    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String    @id @default(cuid())
+  sellerId         String?
+  seller           Seller?   @relation(fields: [sellerId], references: [id])
+  name             String
+  description      String?
+  price            Float
+  stock            Int       @default(0)
+  imageUrl         String?
+  category         String?
+  categories       String[]  @default([])
+  unit             String?
+  location         String?
+  isLimitedEdition Boolean   @default(false)
+  badge            String?
+  availableUntil   DateTime?
+  colors           String[]  @default([])
+  specs            Json?
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   orderItems  OrderItem[]
 }
