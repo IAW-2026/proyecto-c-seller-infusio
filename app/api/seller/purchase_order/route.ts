@@ -172,7 +172,7 @@ async function callPayments({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.PAYMENTS_API_KEY ?? ""}`,
+      "x-api-key": process.env.PAYMENTS_API_KEY ?? "",
     },
     body: JSON.stringify({
       seller_app_id: process.env.SELLER_APP_ID ?? "seller-infusio",
