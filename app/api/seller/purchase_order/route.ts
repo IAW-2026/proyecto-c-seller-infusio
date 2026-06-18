@@ -170,7 +170,10 @@ async function callPayments({
 
   const res = await fetch(`${paymentsUrl}/api/payments/charge`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.PAYMENTS_API_KEY ?? ""}`,
+    },
     body: JSON.stringify({
       seller_app_id: process.env.SELLER_APP_ID ?? "seller-infusio",
       seller_app_order_id: orderId,
