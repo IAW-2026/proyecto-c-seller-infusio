@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { validateApiKey } from "@/lib/api-auth";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ idOrdenCompra: string }> }
 ) {
+  const authError = validateApiKey(request);
+  if (authError) return authError;
+
   try {
     const { idOrdenCompra } = await params;
     const body = await request.json();

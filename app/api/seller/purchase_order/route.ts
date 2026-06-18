@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { validateApiKey } from "@/lib/api-auth";
 
 interface CartItem {
   id: string;
@@ -20,6 +21,9 @@ interface Address {
 }
 
 export async function POST(request: Request) {
+  const authError = validateApiKey(request);
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { shopping_cart_id, user_id, cart_items, address } = body;
