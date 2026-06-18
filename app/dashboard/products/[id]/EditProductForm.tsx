@@ -9,6 +9,7 @@ import Input from "@/components/dashboard/Input";
 import Button from "@/components/dashboard/Button";
 import FormCard from "@/components/dashboard/FormCard";
 import BackLink from "@/components/dashboard/BackLink";
+import { PRODUCT_CATEGORIES } from "@/lib/schemas";
 
 type Product = {
   id: string;
@@ -16,7 +17,7 @@ type Product = {
   description: string | null;
   price: number;
   stock: number;
-  category: string | null;
+  categories: string[];
   imageUrl: string | null;
 };
 
@@ -26,13 +27,16 @@ export default function EditProductForm({ product }: { product: Product }) {
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [showCustomCategory, setShowCustomCategory] = useState(
+    !!product.categories[0] && !PRODUCT_CATEGORIES.includes(product.categories[0] as never)
+  );
 
   const [form, setForm] = useState({
     name: product.name,
     description: product.description ?? "",
     price: product.price.toString(),
     stock: product.stock.toString(),
-    category: product.category ?? "",
+    category: product.categories[0] ?? "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -44,14 +48,16 @@ export default function EditProductForm({ product }: { product: Product }) {
     setLoading(true);
     setError("");
 
+    const { category: selectedCategory, ...restForm } = form;
     const res = await fetch(`/api/seller/products/${product.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        ...form,
+        ...restForm,
         price: parseFloat(form.price),
         stock: parseInt(form.stock),
         imageUrl,
+        categories: selectedCategory ? [selectedCategory] : [],
       }),
     });
 
@@ -169,12 +175,38 @@ export default function EditProductForm({ product }: { product: Product }) {
               />
             </div>
 
-            <Input
-              label="Categoría"
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-            />
+            <div>
+              <label className={labelClass}>Categoría</label>
+              <select
+                value={showCustomCategory ? "custom" : form.category}
+                onChange={(e) => {
+                  if (e.target.value === "custom") {
+                    setShowCustomCategory(true);
+                    setForm({ ...form, category: "" });
+                  } else {
+                    setShowCustomCategory(false);
+                    setForm({ ...form, category: e.target.value });
+                  }
+                }}
+                className={inputClass}
+              >
+                <option value="">Seleccioná una categoría</option>
+                {PRODUCT_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+                <option value="custom">+ Agregar nueva categoría</option>
+              </select>
+              {showCustomCategory && (
+                <input
+                  type="text"
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  placeholder="Nombre de la nueva categoría"
+                  className={`${inputClass} mt-2`}
+                />
+              )}
+            </div>
 
             {error && <p className="text-red-600 text-sm">{error}</p>}
 

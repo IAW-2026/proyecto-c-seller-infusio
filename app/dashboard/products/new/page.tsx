@@ -9,12 +9,14 @@ import Input from "@/components/dashboard/Input";
 import Button from "@/components/dashboard/Button";
 import FormCard from "@/components/dashboard/FormCard";
 import BackLink from "@/components/dashboard/BackLink";
+import { PRODUCT_CATEGORIES } from "@/lib/schemas";
 
 export default function NewProductPage() {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -33,14 +35,16 @@ export default function NewProductPage() {
     setLoading(true);
     setError("");
 
+    const { category: selectedCategory, ...restForm } = form;
     const res = await fetch("/api/seller/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        ...form,
+        ...restForm,
         price: parseFloat(form.price),
         stock: parseInt(form.stock),
         imageUrl,
+        categories: selectedCategory ? [selectedCategory] : [],
       }),
     });
 
@@ -109,13 +113,38 @@ export default function NewProductPage() {
           />
         </div>
 
-        <Input
-          label="Categoría"
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          placeholder="Ej: Té verde, Mate, Hierbas..."
-        />
+        <div>
+          <label className={labelClass}>Categoría</label>
+          <select
+            value={showCustomCategory ? "custom" : form.category}
+            onChange={(e) => {
+              if (e.target.value === "custom") {
+                setShowCustomCategory(true);
+                setForm({ ...form, category: "" });
+              } else {
+                setShowCustomCategory(false);
+                setForm({ ...form, category: e.target.value });
+              }
+            }}
+            className={inputClass}
+          >
+            <option value="">Seleccioná una categoría</option>
+            {PRODUCT_CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+            <option value="custom">+ Agregar nueva categoría</option>
+          </select>
+          {showCustomCategory && (
+            <input
+              type="text"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              placeholder="Nombre de la nueva categoría"
+              className={`${inputClass} mt-2`}
+            />
+          )}
+        </div>
 
         <div>
           <label className={labelClass}>Imagen del producto</label>

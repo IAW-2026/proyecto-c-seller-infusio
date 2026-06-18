@@ -14,10 +14,7 @@ export async function GET(request: Request) {
     const where = {
       isActive: true,
       ...(search && {
-        OR: [
-          { name: { contains: search, mode: "insensitive" as const } },
-          { category: { contains: search, mode: "insensitive" as const } },
-        ],
+        name: { contains: search, mode: "insensitive" as const },
       }),
     };
 
@@ -68,9 +65,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errors }, { status: 400 });
     }
 
-    const { name, description, price, stock, imageUrl, category } = result.data;
+    const { name, description, price, stock, imageUrl, categories } = result.data;
     const product = await prisma.product.create({
-      data: { sellerId: seller.id, name, description, price, stock, imageUrl, category },
+      data: { sellerId: seller.id, name, description, price, stock, imageUrl, categories },
     });
 
     return NextResponse.json({ product }, { status: 201 });

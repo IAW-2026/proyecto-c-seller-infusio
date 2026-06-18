@@ -30,7 +30,6 @@ model Product {
   price            Float
   stock            Int       @default(0)
   imageUrl         String?
-  category         String?
   categories       String[]  @default([])
   unit             String?
   location         String?
