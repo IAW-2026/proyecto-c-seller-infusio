@@ -93,7 +93,10 @@ async function callShipping(params: {
 
   const res = await fetch(`${shippingUrl}/api/shipping`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.SHIPPING_API_KEY ?? ""}`,
+    },
     body: JSON.stringify({
       order_id: params.orderId,
       buyer_id: params.buyerId,

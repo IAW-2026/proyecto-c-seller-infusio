@@ -139,7 +139,7 @@ async function getShippingCost({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.SELLER_API_KEY ?? ""}`,
+      "Authorization": `Bearer ${process.env.SHIPPING_API_KEY ?? ""}`,
     },
     body: JSON.stringify({
       origin_postal_code: originPostalCode,
