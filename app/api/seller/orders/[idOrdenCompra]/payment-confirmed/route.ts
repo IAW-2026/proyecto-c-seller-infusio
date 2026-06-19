@@ -55,6 +55,7 @@ export async function POST(
       const { shipping_id } = await callShipping({
         orderId: idOrdenCompra,
         buyerId: order.buyerId,
+        sellerId: order.sellerId,
         originAddress: seller?.address ?? "Dirección del vendedor",
         originPostalCode: seller?.postalCode ?? "0000",
         destinationAddress: order.destinationAddress ?? "Dirección del comprador",
@@ -80,6 +81,7 @@ export async function POST(
 async function callShipping(params: {
   orderId: string;
   buyerId: string;
+  sellerId: string | null;
   originAddress: string;
   originPostalCode: string;
   destinationAddress: string;
@@ -100,6 +102,7 @@ async function callShipping(params: {
     body: JSON.stringify({
       order_id: params.orderId,
       buyer_id: params.buyerId,
+      seller_id: params.sellerId,
       origin_address: {
         address: params.originAddress,
         postal_code: params.originPostalCode,
