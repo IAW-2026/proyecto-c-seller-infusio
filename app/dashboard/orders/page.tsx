@@ -3,6 +3,7 @@ import Link from "next/link";
 import { updateOrderStatus, createShipment } from "./actions";
 import { auth } from "@clerk/nextjs/server";
 import Pagination from "@/components/ui/Pagination";
+import PreparationChecklistModal from "./PreparationChecklistModal";
 
 const STATUS_LABEL: Record<string, string> = {
   PENDING: "Pendiente",
@@ -22,7 +23,18 @@ const STATUS_STYLE: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-800",
 };
 
-function OrderActions({ o }: { o: { id: string; status: string; shippingId: string | null } }) {
+type OrderItem = {
+  id: string;
+  quantity: number;
+  productVariant: string | null;
+  product: { name: string };
+};
+
+function OrderActions({
+  o,
+}: {
+  o: { id: string; status: string; shippingId: string | null; items: OrderItem[] };
+}) {
   return (
     <>
       <Link
@@ -39,11 +51,7 @@ function OrderActions({ o }: { o: { id: string; status: string; shippingId: stri
         </form>
       )}
       {o.status === "PAYMENT_CONFIRMED" && o.shippingId && (
-        <form action={updateOrderStatus.bind(null, o.id, "PREPARING")}>
-          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
-            Comenzar preparación
-          </button>
-        </form>
+        <PreparationChecklistModal orderId={o.id} items={o.items} />
       )}
       {o.status === "PREPARING" && (
         <form action={updateOrderStatus.bind(null, o.id, "DISPATCHED")}>
@@ -77,7 +85,13 @@ export default async function OrdersPage({
   };
 
   const [orders, total] = await Promise.all([
-    prisma.order.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" } }),
+    prisma.order.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: { items: { include: { product: { select: { name: true } } } } },
+    }),
     prisma.order.count({ where }),
   ]);
 
