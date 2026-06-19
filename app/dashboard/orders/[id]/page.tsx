@@ -86,11 +86,27 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               </div>
             ))}
           </div>
-          <div className="border-t border-cream mt-3 pt-3 flex justify-between">
-            <span className="text-sm font-semibold text-forest-dark">Total</span>
-            <span className="text-sm font-bold text-forest-dark">
-              ${order.totalAmount.toLocaleString("es-AR")}
-            </span>
+          <div className="border-t border-cream mt-3 pt-3 space-y-1.5">
+            <div className="flex justify-between">
+              <span className="text-sm text-forest-dark">Subtotal productos</span>
+              <span className="text-sm text-forest-dark">
+                ${order.items.reduce((s, i) => s + i.unitPrice * i.quantity, 0).toLocaleString("es-AR")}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-forest-dark">Envío</span>
+              <span className="text-sm text-forest-dark">
+                {order.shippingCost != null
+                  ? `$${order.shippingCost.toLocaleString("es-AR")}`
+                  : "—"}
+              </span>
+            </div>
+            <div className="flex justify-between pt-1 border-t border-cream">
+              <span className="text-sm font-semibold text-forest-dark">Total</span>
+              <span className="text-sm font-bold text-forest-dark">
+                ${order.totalAmount.toLocaleString("es-AR")}
+              </span>
+            </div>
           </div>
         </div>
 
