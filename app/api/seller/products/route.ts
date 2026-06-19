@@ -65,9 +65,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errors }, { status: 400 });
     }
 
-    const { name, description, price, stock, imageUrl, categories } = result.data;
+    const { name, description, price, stock, imageUrl, categories, location } = result.data;
     const product = await prisma.product.create({
-      data: { sellerId: seller.id, name, description, price, stock, imageUrl, categories },
+      data: { sellerId: seller.id, name, description, price, stock, imageUrl, categories, location },
     });
 
     return NextResponse.json({ product }, { status: 201 });
