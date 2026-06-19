@@ -50,7 +50,11 @@ export async function POST(request: Request) {
     const destinationAddress = `${(address as Address).street}, ${(address as Address).city}, ${(address as Address).province}`;
     const destinationPostalCode = (address as Address).postal_code;
 
-    const seller = await prisma.seller.findFirst();
+    const firstProduct = await prisma.product.findUnique({
+      where: { id: cart_items[0].product_id },
+      include: { seller: true },
+    });
+    const seller = firstProduct?.seller ?? null;
 
     const { shipping_cost } = await getShippingCost({
       originPostalCode: seller?.postalCode ?? "0000",
@@ -64,6 +68,7 @@ export async function POST(request: Request) {
         data: {
           buyerId: user_id,
           shoppingCartId: shopping_cart_id,
+          sellerId: seller?.id ?? null,
           totalAmount,
           shippingCost: shipping_cost,
           status: "PENDING",
