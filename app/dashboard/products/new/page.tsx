@@ -24,6 +24,7 @@ export default function NewProductPage() {
     price: "",
     stock: "",
     category: "",
+    location: "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -45,6 +46,7 @@ export default function NewProductPage() {
         stock: parseInt(form.stock),
         imageUrl,
         categories: selectedCategory ? [selectedCategory] : [],
+        location: form.location || undefined,
       }),
     });
 
@@ -145,6 +147,14 @@ export default function NewProductPage() {
             />
           )}
         </div>
+
+        <Input
+          label="Origen del producto"
+          name="location"
+          value={form.location}
+          onChange={handleChange}
+          placeholder="Ej: Misiones, Argentina"
+        />
 
         <div>
           <label className={labelClass}>Imagen del producto</label>

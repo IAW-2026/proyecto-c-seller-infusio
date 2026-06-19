@@ -19,6 +19,7 @@ type Product = {
   stock: number;
   categories: string[];
   imageUrl: string | null;
+  location: string | null;
 };
 
 export default function EditProductForm({ product }: { product: Product }) {
@@ -37,6 +38,7 @@ export default function EditProductForm({ product }: { product: Product }) {
     price: product.price.toString(),
     stock: product.stock.toString(),
     category: product.categories[0] ?? "",
+    location: product.location ?? "",
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -58,6 +60,7 @@ export default function EditProductForm({ product }: { product: Product }) {
         stock: parseInt(form.stock),
         imageUrl,
         categories: selectedCategory ? [selectedCategory] : [],
+        location: form.location || null,
       }),
     });
 
@@ -207,6 +210,14 @@ export default function EditProductForm({ product }: { product: Product }) {
                 />
               )}
             </div>
+
+            <Input
+              label="Origen del producto"
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              placeholder="Ej: Misiones, Argentina"
+            />
 
             {error && <p className="text-red-600 text-sm">{error}</p>}
 

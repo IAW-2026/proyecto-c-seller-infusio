@@ -12,6 +12,7 @@ export const productCreateSchema = z.object({
     .nonnegative("El stock no puede ser negativo"),
   imageUrl: z.string().optional(),
   categories: z.array(z.string()).default([]),
+  location: z.string().max(200).optional(),
 });
 
 export const productUpdateSchema = z
@@ -22,6 +23,7 @@ export const productUpdateSchema = z
     stock: z.number().int().nonnegative(),
     imageUrl: z.string().nullable(),
     categories: z.array(z.string()),
+    location: z.string().max(200).nullable(),
   })
   .partial()
   .strict();
