@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { updateOrderStatus } from "./actions";
 
 type Item = {
   id: string;
   quantity: number;
   productVariant: string | null;
-  product: { name: string };
+  product: { name: string; imageUrl: string | null };
 };
 
 export default function PreparationChecklistModal({
@@ -65,6 +66,19 @@ export default function PreparationChecklistModal({
                       onChange={() => toggle(item.id)}
                       className="w-4 h-4 accent-forest-dark flex-shrink-0"
                     />
+                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-cream-light flex items-center justify-center">
+                      {item.product.imageUrl ? (
+                        <Image
+                          src={item.product.imageUrl}
+                          alt={item.product.name}
+                          width={40}
+                          height={40}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <span className="text-lg">🌿</span>
+                      )}
+                    </div>
                     <span
                       className={`text-sm transition-colors ${
                         checked[item.id]
