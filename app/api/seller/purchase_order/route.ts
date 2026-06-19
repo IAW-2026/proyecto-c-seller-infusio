@@ -98,7 +98,7 @@ export async function POST(request: Request) {
 
     await prisma.order.update({
       where: { id: order.id },
-      data: { paymentOrderId: payment_order_id, checkoutUrl: checkout_url },
+      data: { paymentOrderId: String(payment_order_id), checkoutUrl: checkout_url },
     });
 
     return NextResponse.json(
