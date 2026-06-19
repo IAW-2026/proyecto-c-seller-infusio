@@ -32,7 +32,7 @@ export async function createShipment(orderId: string) {
   const { shipping_id } = await callShipping({
     orderId,
     buyerId: order.buyerId,
-    sellerId: seller?.id ?? null,
+    sellerId: seller?.clerkId ?? null,
     originAddress: seller?.address ?? "Dirección del vendedor",
     originPostalCode: seller?.postalCode ?? "0000",
     destinationAddress: order.destinationAddress ?? "Dirección del comprador",
