@@ -55,7 +55,7 @@ export async function POST(
       const { shipping_id } = await callShipping({
         orderId: idOrdenCompra,
         buyerId: order.buyerId,
-        sellerId: order.sellerId,
+        sellerId: seller?.clerkId ?? null,
         originAddress: seller?.address ?? "Dirección del vendedor",
         originPostalCode: seller?.postalCode ?? "0000",
         destinationAddress: order.destinationAddress ?? "Dirección del comprador",
