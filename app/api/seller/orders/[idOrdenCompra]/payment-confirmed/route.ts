@@ -43,7 +43,7 @@ export async function POST(
       where: { id: idOrdenCompra },
       data: {
         status: status === "accepted" ? "PAYMENT_CONFIRMED" : "CANCELLED",
-        paymentOrderId: payment_order_id,
+        paymentOrderId: String(payment_order_id),
       },
     });
 
@@ -52,20 +52,24 @@ export async function POST(
         ? await prisma.seller.findUnique({ where: { id: order.sellerId } })
         : null;
 
-      const { shipping_id } = await callShipping({
-        orderId: idOrdenCompra,
-        buyerId: order.buyerId,
-        sellerId: seller?.clerkId ?? null,
-        originAddress: seller?.address ?? "Dirección del vendedor",
-        originPostalCode: seller?.postalCode ?? "0000",
-        destinationAddress: order.destinationAddress ?? "Dirección del comprador",
-        destinationPostalCode: order.destinationPostalCode ?? "0000",
-      });
+      try {
+        const { shipping_id } = await callShipping({
+          orderId: idOrdenCompra,
+          buyerId: order.buyerId,
+          sellerId: seller?.clerkId ?? null,
+          originAddress: seller?.address ?? "Dirección del vendedor",
+          originPostalCode: seller?.postalCode ?? "0000",
+          destinationAddress: order.destinationAddress ?? "Dirección del comprador",
+          destinationPostalCode: order.destinationPostalCode ?? "0000",
+        });
 
-      await prisma.order.update({
-        where: { id: idOrdenCompra },
-        data: { shippingId: shipping_id },
-      });
+        await prisma.order.update({
+          where: { id: idOrdenCompra },
+          data: { shippingId: shipping_id },
+        });
+      } catch (shippingError) {
+        console.error("Error al llamar a shipping (no crítico):", shippingError);
+      }
     }
 
     return NextResponse.json({ ok: true });
