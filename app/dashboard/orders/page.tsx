@@ -27,7 +27,7 @@ type OrderItem = {
   id: string;
   quantity: number;
   productVariant: string | null;
-  product: { name: string };
+  product: { name: string; imageUrl: string | null };
 };
 
 function OrderActions({
@@ -90,7 +90,7 @@ export default async function OrdersPage({
       skip,
       take: limit,
       orderBy: { createdAt: "desc" },
-      include: { items: { include: { product: { select: { name: true } } } } },
+      include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
     }),
     prisma.order.count({ where }),
   ]);
