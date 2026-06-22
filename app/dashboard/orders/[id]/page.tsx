@@ -124,10 +124,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 <span className="text-forest-dark font-medium">Código postal: </span>
                 <span className="text-forest-dark">{order.destinationPostalCode ?? "—"}</span>
               </p>
-              <p>
-                <span className="text-forest-dark font-medium">ID de envío: </span>
-                <span className="font-mono text-xs text-forest-dark">{order.shippingId ?? "—"}</span>
-              </p>
+              {order.shippingId && ["DISPATCHED", "DELIVERED"].includes(order.status) && (
+                <p>
+                  <span className="text-forest-dark font-medium">ID de envío: </span>
+                  <span className="font-mono text-xs text-forest-dark">{order.shippingId}</span>
+                </p>
+              )}
             </div>
           </div>
 
