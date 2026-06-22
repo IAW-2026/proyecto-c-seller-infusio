@@ -19,7 +19,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
   revalidatePath("/dashboard/orders");
 }
 
-export async function createShipment(orderId: string) {
+export async function dispatchOrder(orderId: string) {
   const { userId } = await auth();
 
   const order = await prisma.order.findUnique({ where: { id: orderId } });
@@ -41,7 +41,7 @@ export async function createShipment(orderId: string) {
 
   await prisma.order.update({
     where: { id: orderId },
-    data: { shippingId: shipping_id },
+    data: { shippingId: shipping_id, status: "DISPATCHED" },
   });
 
   revalidatePath("/dashboard/orders");

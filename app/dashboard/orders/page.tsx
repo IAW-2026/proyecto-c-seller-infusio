@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { updateOrderStatus, createShipment } from "./actions";
+import { updateOrderStatus, dispatchOrder } from "./actions";
 import { auth } from "@clerk/nextjs/server";
 import Pagination from "@/components/ui/Pagination";
 import PreparationChecklistModal from "./PreparationChecklistModal";
@@ -33,7 +33,7 @@ type OrderItem = {
 function OrderActions({
   o,
 }: {
-  o: { id: string; status: string; shippingId: string | null; items: OrderItem[] };
+  o: { id: string; status: string; items: OrderItem[] };
 }) {
   return (
     <>
@@ -43,18 +43,11 @@ function OrderActions({
       >
         Ver
       </Link>
-      {o.status === "PAYMENT_CONFIRMED" && !o.shippingId && (
-        <form action={createShipment.bind(null, o.id)}>
-          <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
-            Crear envío
-          </button>
-        </form>
-      )}
-      {o.status === "PAYMENT_CONFIRMED" && o.shippingId && (
+      {o.status === "PAYMENT_CONFIRMED" && (
         <PreparationChecklistModal orderId={o.id} items={o.items} />
       )}
       {o.status === "PREPARING" && (
-        <form action={updateOrderStatus.bind(null, o.id, "DISPATCHED")}>
+        <form action={dispatchOrder.bind(null, o.id)}>
           <button type="submit" className="text-sm text-forest-dark font-medium transition-colors hover:underline">
             Marcar como despachado
           </button>
