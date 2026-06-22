@@ -190,7 +190,9 @@ export default async function OrdersPage({
                     </span>
                   </td>
                   <td className="px-6 py-4 text-forest-dark text-xs font-mono hidden md:table-cell">
-                    {o.shippingId ? o.shippingId.slice(0, 8) + "..." : "—"}
+                    {o.shippingId && ["DISPATCHED", "DELIVERED"].includes(o.status)
+                      ? o.shippingId.slice(0, 8) + "..."
+                      : ""}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-3 justify-end items-center flex-wrap">
